@@ -1,0 +1,52 @@
+#!/usr/bin/env node
+
+var fs = require("fs")
+var FTPClient = require("ftp")
+
+var c = new FTPClient()
+
+c.on("ready", function () {
+
+    c.cwd("www", function (err) {
+
+        function walkit (dir) {
+
+            var files = fs.readdirSync(dir);
+
+            files.forEach(function(file){
+
+                var fileStat = fs.statSync(dir+"/"+file);
+
+                if(fileStat.isDirectory() === false){
+                    var parts = dir.split("/");
+                    var file_name = parts.splice(1, parts.length-1).concat(file).join("/");
+                    console.log("putting: ", file_name)
+                    c.put("static/"+file_name, file_name, function (err) {
+                        if (err) {
+                            c.end()
+                            throw err
+                        }
+                    })
+                }
+                else{
+                    console.log("mkdir: ", file)
+                    c.mkdir(file, function (err) {
+                        walkit(dir+"/"+file);
+                    })
+                }
+            })
+        }
+
+        walkit("static")
+
+        c.end()
+    })
+})
+
+c.connect({
+    host:     "10.140.12.232",
+    user:     "microct50",
+    password: "made1in2ch"
+})
+
+// vim: ft=javascript

@@ -1,0 +1,20 @@
+{
+    "name": "uct-interactive",
+    "description": "",
+    "version": "0.1.0",
+    "homepage": "",
+    "author": {
+        "name": "Erick Fleming",
+        "email": "erick@sudogs.com"
+    },
+    "repository": {},
+    "engines": {
+        "node": ">= 0.8.0"
+    },
+    "dependencies": {
+    },
+    "devDependencies": {
+        "ftp": ""
+    }
+}
+
