@@ -204,25 +204,52 @@ function TitlePresenter (model, view) {
 
 $(document).ready(function () {
 
-    var $body = $("body")
+    console.log("ready to go")
 
-    listM = listModel()
+    $("#login").on("click", function () {
 
-    titleV = titleView()
+        var creds = {
+            "username": $("#username").val(),
+            "password": $("#password").val()
+        }
 
-    titleM = titleModel()
-    titleM.content = "default"
-
-    titleP = new TitlePresenter(titleM, titleV)
-    titleP.renderTo($body)
-
-    listItemFormV = listItemFormView()
-    listItemFormP = new ListItemFormPresenter(listM, listItemFormV)
-    listItemFormP.renderTo($body)
-
-    listV = listView()
-    listP = new ListPresenter(listM, listV)
-    listP.renderTo($body)
-
+        jQuery.post("/cgi-bin/show_form.com", creds, function (data, statusText) {
+            console.log(data)
+        }, "json")
+    })
 })
 
+    //var $body = $("body")
+
+    //listM = listModel()
+
+    //titleV = titleView()
+
+    //titleM = titleModel()
+    //titleM.content = "default"
+
+    //titleP = new TitlePresenter(titleM, titleV)
+    //titleP.renderTo($body)
+
+    //listItemFormV = listItemFormView()
+    //listItemFormP = new ListItemFormPresenter(listM, listItemFormV)
+    //listItemFormP.renderTo($body)
+
+    //listV = listView()
+    //listP = new ListPresenter(listM, listV)
+    //listP.renderTo($body)
+
+    //var creds = {
+        //"account":"VUIIS_IVIS",
+        //"savegrp":"on",
+        //"user":"manager",
+        //"saveusr":"on",
+        //"pwd": null,
+        //"savepwd":"on",
+        //"passwd":"japon",
+        //"end":"0"
+    //}
+
+    //jQuery.post("http://faces.ccrc.uga.edu/ccrcfaces/login.php", creds, function (data, statusText) {
+        //console.log(statusText, data)
+    //})
