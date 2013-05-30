@@ -29,10 +29,7 @@ c.on("ready", function () {
                     })
                 }
                 else{
-                    console.log("mkdir: ", file)
-                    c.mkdir(file, function (err) {
-                        walkit(dir+"/"+file);
-                    })
+                    walkit(dir+"/"+file);
                 }
             })
         }
