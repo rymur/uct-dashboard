@@ -204,6 +204,21 @@ function TitlePresenter (model, view) {
 
 $(document).ready(function () {
 
+    routie("/measurements", function(name) {
+        $(".nav li.active").toggleClass("active")
+        $("#navMeasurements").addClass("active")
+    })
+
+    routie("/scheduling", function(name) {
+        $(".nav li.active").toggleClass("active")
+        $("#navScheduling").addClass("active")
+    })
+
+    routie("/", function(name) {
+        $(".nav li.active").toggleClass("active")
+        $("#navHome").addClass("active")
+    })
+
     $("#btnCancel").on("click", function () {
         $("#output").html("you can't see this")
         $("#login").modal("hide")
