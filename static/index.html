@@ -4,25 +4,35 @@
 
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <title>SCANCO uCT</title>
-        <link href="/style/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+        <title>&#181;CT</title>
+        <link href="/style/bootstrap/css/bootstrap-min.css" rel="stylesheet" media="screen">
         <script src="/vendor/jquery.js"></script>
         <script src="/vendor/lodash.js"></script>
-        <script src="/style/bootstrap/js/bootstrap.min.js"></script>
+        <script src="/style/bootstrap/js/bootstrap-min.js"></script>
         <script src="/lib/main.js"></script>
     </head>
 
     <body>
         
-        <h1>uCT Dashboard</h1>
-
-        <div>
-            <label>User Name:</label><input id="username" type="text"><br/>
-            <label>Password:</label><input id="password" type="password"><br/>
-            <button id="login">Login</button>
-        </div>
+        <h1>&#181;CT Dashboard</h1>
     
         <div id="output"></div>
+
+        <div id="login" class="modal hide fade">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3>Login</h3>
+            </div>
+            <div class="modal-body">
+                <label>User Name:</label><input id="username" type="text"><br/>
+                <label>Password:</label><input id="password" type="password">
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn" id="btnCancel">Cancel</a>
+                <a href="#" class="btn btn-primary" id="btnLogin">Login</a>
+            </div>
+        </div>
+
     </body>
 
 </html>

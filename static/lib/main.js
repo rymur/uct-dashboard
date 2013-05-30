@@ -204,19 +204,40 @@ function TitlePresenter (model, view) {
 
 $(document).ready(function () {
 
-    console.log("ready to go")
+    $("#btnCancel").on("click", function () {
+        $("#output").html("you can't see this")
+        $("#login").modal("hide")
+    })
 
-    $("#login").on("click", function () {
+    $("#btnLogin").on("click", function () {
 
         var creds = {
             "username": $("#username").val(),
             "password": $("#password").val()
         }
 
-        jQuery.post("/cgi-bin/show_form.com", creds, function (data, statusText) {
-            console.log(data)
-        }, "json")
+        var req = jQuery.post("/cgi-bin/authenticate.com", creds)
+            
+        req.done(function (data) {
+            $("#output").html("welcome to dashboard: " + data)
+            $("#login").modal("hide")
+        })
+
+        req.fail(function () {
+            console.log("failed")
+        })
     })
+
+    var req = jQuery.get("/cgi-bin/authorize.com")
+        
+    req.done(function (result) {
+        console.log("success")
+    })
+
+    req.fail(function () {
+        $("#login").modal("show")
+    })
+
 })
 
     //var $body = $("body")
@@ -252,4 +273,16 @@ $(document).ready(function () {
 
     //jQuery.post("http://faces.ccrc.uga.edu/ccrcfaces/login.php", creds, function (data, statusText) {
         //console.log(statusText, data)
+    //})
+//
+    //$("#login").on("click", function () {
+
+        //var creds = {
+            //"username": $("#username").val(),
+            //"password": $("#password").val()
+        //}
+
+        //jQuery.post("/cgi-bin/show_form.com", creds, function (data, statusText) {
+            //console.log(data)
+        //}, "json")
     //})
