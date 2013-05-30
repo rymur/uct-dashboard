@@ -205,11 +205,17 @@ function TitlePresenter (model, view) {
 $(document).ready(function () {
 
     routie("/measurements", function(name) {
+        $("#output").html('<table class="table"><tbody><tr><td>One</td><td>two</td><td>three</td></tr></tbody></table>')
         $(".nav li.active").toggleClass("active")
         $("#navMeasurements").addClass("active")
     })
 
     routie("/scheduling", function(name) {
+        $(".nav li.active").toggleClass("active")
+        $("#navScheduling").addClass("active")
+    })
+
+    routie("/admin", function(name) {
         $(".nav li.active").toggleClass("active")
         $("#navScheduling").addClass("active")
     })
@@ -234,7 +240,11 @@ $(document).ready(function () {
         var req = jQuery.post("/cgi-bin/authenticate.com", creds)
             
         req.done(function (data) {
-            $("#output").html("welcome to dashboard: " + data)
+            var dataItems = data.replace("\r", "").split(",")
+            if (dataItems[1] !== "admin") {
+                $("#navAdmin").hide()
+            }
+            $("#output").html("welcome to dashboard: " + dataItems[0])
             $("#login").modal("hide")
         })
 
