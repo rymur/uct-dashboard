@@ -1,0 +1,15 @@
+#!/bin/bash
+
+CONNECTION_INFO="microct50,made1in2ch 10.140.12.232"
+
+lftp -u $CONNECTION_INFO -e "\
+    cd www; \
+    put -a static/index.html; \
+    cd lib; \
+    put -a node_modules/lymph-core/lib/index-browser.js -o lymph-core.js; \
+    put -a node_modules/lymph-client/lib/index-browser.js -o lymph-client.js; \
+    put -a lib/index-client.js -o index.js; \
+    cd ../cgi-bin; \
+    mput -a static/cgi-bin/*.com; \
+    bye \
+" 
