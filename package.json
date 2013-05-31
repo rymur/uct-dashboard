@@ -16,6 +16,12 @@
     },
     "devDependencies": {
         "ftp": ""
+    },
+    "build": {
+        "type": "app",
+        "clientDependencies": [
+            "lymph-core"
+        ]
     }
 }
 
