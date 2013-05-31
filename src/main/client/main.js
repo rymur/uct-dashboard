@@ -206,10 +206,20 @@ lymph.define("main", function (require) {
 
 })
 
+var lymphClient = lymph.require("lymph-client")
+
 $(document).ready(function () {
 
+    var output = eid("output")
+
     routie("/measurements", function(name) {
-        $("#output").html('<table class="table"><tbody><tr><td>One</td><td>two</td><td>three</td></tr></tbody></table>')
+
+        var table = TABLE({class:"table"},
+            TBODY(TR(TD("One"), TD("Two"), TD("Three")))
+        )
+
+        clearAndAppend(output, table)
+
         $(".nav li.active").toggleClass("active")
         $("#navMeasurements").addClass("active")
     })
@@ -230,7 +240,7 @@ $(document).ready(function () {
     })
 
     $("#btnCancel").on("click", function () {
-        $("#output").html("you can't see this")
+        clearAndAppend(output, SPAN("you can't see this"))
         $("#login").modal("hide")
     })
 
@@ -248,7 +258,7 @@ $(document).ready(function () {
             if (dataItems[1] !== "admin") {
                 $("#navAdmin").hide()
             }
-            $("#output").html("welcome to dashboard: " + dataItems[0])
+            clearAndAppend(output, SPAN("welcome to dashboard: " + dataItems[0]))
             $("#login").modal("hide")
         })
 
@@ -269,7 +279,14 @@ $(document).ready(function () {
 
 })
 
+function eid(id) {
+    return document.getElementById(id)
+}
 
+function clearAndAppend (parent, child) {
+    parent.innerHTML = ""
+    parent.appendChild(child)
+}
 
         //var $body = $("body")
 
