@@ -38,6 +38,10 @@ app.get("/lib/index-client.js.map", function (req, res) {
     res.sendfile("lib/index-client.js.map")
 })
 
+app.get("/cgi-bin/disks.com", function (req, res) {
+    res.sendfile("misc/disks.json")
+})
+
 app.get("/cgi-bin/authorize.com", function (req, res) {
     if (req.cookies.uct_uid && req.cookies.uct_uid === "123") {
         res.send(200)
