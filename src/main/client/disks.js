@@ -14,13 +14,13 @@ lymph.define("disks", function (require) {
 
     function buildView (data) {
         return SECTION(
-            HEADER("Disks Usage"),
-            TABLE({ class:"table" },
-                  THEAD(
-                      TH("Name"), TH("Used"), TH("Free"), TH("Total")
-                  ),
-                  TBODY(data.map(buildItemView))
-                 )
+            HEADER(I({ class: "icon-hdd" }), SPAN("Disks Usage")),
+            TABLE({ class:"widget" },
+                THEAD(
+                    TH("Name"), TH("Used"), TH("Free"), TH("Total")
+                ),
+                TBODY(data.map(buildItemView))
+            )
         )
     }
 
@@ -31,8 +31,8 @@ lymph.define("disks", function (require) {
         return TR(
             TD(data.name),
             TD(buildProgressView(percent)),
-            TD(bytesToSize(freeBytes)),
-            TD(bytesToSize(maxBytes))
+            TD({ class:"number"}, bytesToSize(freeBytes)),
+            TD({ class:"number"}, bytesToSize(maxBytes))
         )
     }
     function buildProgressView (percentage) {

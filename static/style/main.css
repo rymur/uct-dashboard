@@ -1,0 +1,72 @@
+header.title {
+    border: 1px solid #ccc;
+    background-color: black;
+    font-family: 'Open Sans', 'Alef', sans-serif;
+}
+
+header.title span {
+    display: inline-block;
+    font-size: xx-large;
+    color: white;
+}
+
+header.title nav {
+    margin-left: 20px;
+    display: inline-block;
+}
+
+header.title nav a {
+    padding: 0 5px;
+    color: white;
+}
+
+header.title nav a.active {
+    padding: 0 5px;
+    color: white;
+    background: green;
+}
+
+header.title i {
+    margin: 5px;
+}
+
+header.title span {
+    font-weight: bold;
+}
+
+.dashboard {
+    margin: 10px;
+    width: 80%;
+}
+
+.dashboard header {
+    font-size: x-large;
+}
+
+.dashboard header span {
+    margin-left: 10px;
+    text-align: left;
+}
+
+.dashboard section {
+}
+
+.dashboard table {
+    width: 100%;
+    border: 1px solid #ccc;
+}
+
+.dashboard th {
+    font-size: .75em;
+    background-color: #ccc;
+}
+
+.dashboard td {
+    border: 1px solid #ccc;
+    padding: 3px 11px;
+}
+
+td.number {
+    text-align: right;
+}
+

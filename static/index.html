@@ -4,12 +4,17 @@
 
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
         <title>&#181;CT</title>
-        <link href="/style/bootstrap/css/bootstrap-min.css" rel="stylesheet" media="screen">
+
+        <link rel="stylesheet" media="screen" href="/style/normalize.css">
+        <link rel="stylesheet" media="screen" href="/style/font-awesome/css/font-awesome.css">
+        <link rel='stylesheet' media="screen" href='http://fonts.googleapis.com/css?family=Alef|Open+Sans'>
+        <link rel="stylesheet" media="screen" href="/style/main.css">
+
         <script src="/lib/jquery.js"></script>
         <script src="/lib/routie.js"></script>
         <script src="/lib/idbstore.js"></script>
-        <script src="/style/bootstrap/js/bootstrap-min.js"></script>
         <script src="/lib/lymph-core.js"></script>
         <script src="/lib/lymph-client.js"></script>
         <script src="/lib/index.js"></script>
@@ -17,33 +22,16 @@
 
     <body onload="lymph.require('main')">
 
-        <div class="navbar">
-            <div class="navbar-inner">
-                <div class="container">
+        <header class="title">
+            <span>&#181;CT Dashboard</span>
+            <nav>
+                <a id="navMeasurements" href="#/">Measurements</a>
+                <a id="navScheduling" href="#/scheduling">Scheduling</a>
+                <a id="navAdmin" href="#/admin">Admin</a>
+            </nav>
+        </header>
 
-                    <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
-                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </a>
-
-                    <a class="brand" href="#/">&#181;CT Dashboard</a>
-
-                    <div class="nav-collapse collapse">
-                        <ul class="nav">
-                            <li id="navHome" class="active"><a href="#/">Home</a></li>
-                            <li id="navMeasurements"><a href="#/measurements">Measurements</a></li>
-                            <li id="navScheduling"><a href="#/scheduling">Scheduling</a></li>
-                            <li id="navAdmin"><a href="#/admin">Admin</a></li>
-                        </ul>
-                    </div>
-
-                </div>
-            </div>
-        </div>        
-
-        <div id="main"></div>
+        <div id="main" class="dashboard"></div>
 
     </body>
 
