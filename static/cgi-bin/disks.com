@@ -3,7 +3,7 @@ $ say "Content-Type: application/json"
 $ say ""
 $
 $ first = 1
-$ say "{"
+$ say "["
 $ loop:
 $   dev = f$device("*", "DISK")
 $   if (dev .nes. "")
@@ -21,18 +21,19 @@ $     say row_data
 $     goto loop
 $   endif
 $ loop_end:
-$ say "}"
+$ say "]"
 $
 $ row: subroutine
-$   row_data == row_data + """" + dev - "_" - ":" + """:"
 $   row_data == row_data + "{"
-$   call field 1 "devType"  'f$getdvi(dev, "device_type_name")'
-$   call field 1 "volName"  'f$getdvi(dev, "volnam")'
-$   call field 1 "volCount" 'f$getdvi(dev, "volcount")'
-$   call field 1 "free"     'f$getdvi(dev, "freeblocks")'
-$   call field 1 "max"      'f$getdvi(dev, "maxblock")'
-$   call field 1 "host"     'f$getdvi(dev, "host_name")'
-$   call field 0 "custer"   'f$getdvi(dev, "cluster")'
+$   call field 1 "devName"    'f$string(dev - "_" - ":")'
+$   call field 1 "logVolName" 'f$getdvi(dev, "logvolnam")'
+$   call field 1 "volName"    'f$getdvi(dev, "volnam")'
+$   call field 1 "volCount"   'f$getdvi(dev, "volcount")'
+$   call field 1 "volSize"    'f$getdvi(dev, "volsize")'
+$   call field 1 "free"       'f$getdvi(dev, "freeblocks")'
+$   call field 1 "max"        'f$getdvi(dev, "maxblock")'
+$   call field 1 "host"       'f$getdvi(dev, "host_name")'
+$   call field 0 "custer"     'f$getdvi(dev, "cluster")'
 $   row_data == row_data + "}"
 $ endsubroutine
 $
