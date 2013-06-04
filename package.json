@@ -20,7 +20,7 @@
     "build": {
         "type": "app",
         "clientDependencies": [
-            "lymph-core"
+            "lymph-core", "lymph-client"
         ]
     }
 }
