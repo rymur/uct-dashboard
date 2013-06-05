@@ -7,10 +7,11 @@ describe("scheduling", function () {
 
     describe("processing raw data from server", function () {
 
-        var rawData = "2013-05-24 16:00:00 2013-05-24 17:00:00 fe_nf1 Jean nf1 col2 bone | N/A\n2013-05-15 17:00:00 2013-05-16 06:00:00 fe_nasa VBX | N/A\n2013-06-07 16:00:00 2013-06-07 21:00:00 orear_plasmin  | N/A"
+        var rawData = "40 2013-05-24 16:00:00 2013-05-24 17:00:00 fe_nf1 Jean nf1 col2 bone | N/A\n40 2013-05-15 17:00:00 2013-05-16 06:00:00 fe_nasa VBX | N/A\n40 2013-06-07 16:00:00 2013-06-07 21:00:00 orear_plasmin  | N/A"
 
         var expectedData = [
             { 
+                scanner: "40",
                 startDate: "2013-05-24",
                 startTime: "16:00:00",
                 start: "Fri May 24 2013 16:00:00 GMT-0500 (CDT)",
@@ -20,9 +21,11 @@ describe("scheduling", function () {
                 account: "fe_nf1",
                 comment: "Jean nf1 col2 bone",
                 title: "fe_nf1: Jean nf1 col2 bone",
-                allDay: false
+                allDay: false,
+                backgroundColor: "blue"
             },
             { 
+                scanner: "40",
                 startDate: "2013-05-15",
                 startTime: "17:00:00",
                 start: "Wed May 15 2013 17:00:00 GMT-0500 (CDT)",
@@ -32,9 +35,11 @@ describe("scheduling", function () {
                 account: "fe_nasa",
                 comment: "VBX",
                 title: "fe_nasa: VBX",
-                allDay: false
+                allDay: false,
+                backgroundColor: "blue"
             },
             { 
+                scanner: "40",
                 startDate: "2013-06-07",
                 startTime: "16:00:00",
                 start: "Fri Jun 07 2013 16:00:00 GMT-0500 (CDT)",
@@ -44,13 +49,23 @@ describe("scheduling", function () {
                 account: "fe_nasa",
                 comment: "",
                 title: "fe_nasa: ",
-                allDay: false
+                allDay: false,
+                backgroundColor: "blue"
             }
         ]
 
         it("extract the fields", function () {
             var result = scheduling.process(rawData)
+            console.log(result)
             assert.deepEqual(result[0], expectedData[0])
+        })
+    })
+
+    describe("a weeks view", function () {
+
+        it("sanity", function () {
+            assert.equal(true, true)
+            console.log(scheduling.buildCustomView([]))
         })
     })
 })
