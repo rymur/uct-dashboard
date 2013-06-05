@@ -2,6 +2,7 @@ lymph.define("main", function (require) {
 
     var c = require("lymph-client")
     var disks = require("disks")
+    var scheduling = require("scheduling")
     var mainEl = $("#main")
 
     routie("/", function () {
@@ -14,6 +15,7 @@ lymph.define("main", function (require) {
         $("header.title nav a").removeClass("active")
         $("#navScheduling").addClass("active")
         mainEl.html("")
+        scheduling.buildView(mainEl, [])
     })
 
     routie("/admin", function () {
@@ -25,8 +27,5 @@ lymph.define("main", function (require) {
         })
     })
 
-    routie("*", function () {
-        routie("/")
-    })
 })
 

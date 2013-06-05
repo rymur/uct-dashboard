@@ -70,3 +70,7 @@ td.number {
     text-align: right;
 }
 
+#calendar {
+    width: 900px;
+    margin: 0 auto;
+}
