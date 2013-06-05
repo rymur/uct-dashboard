@@ -15,7 +15,10 @@ lymph.define("main", function (require) {
         $("header.title nav a").removeClass("active")
         $("#navScheduling").addClass("active")
         mainEl.html("")
-        scheduling.buildView(mainEl, [])
+        var rawData = "2013-05-24 16:00:00 2013-05-24 17:00:00 fe_nf1 Jean nf1 col2 bone | N/A\n2013-05-15 17:00:00 2013-05-16 06:00:00 fe_nasa VBX | N/A\n2013-06-07 16:00:00 2013-06-07 21:00:00 orear_plasmin  | N/A"
+        var events = scheduling.process(rawData)
+        console.log(events)
+        scheduling.buildView(mainEl, events)
     })
 
     routie("/admin", function () {
