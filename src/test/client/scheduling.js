@@ -1,8 +1,6 @@
-var assert = chai.assert
-var client = lymph.require("lymph-client")
-
 describe("scheduling", function () {
 
+    var assert = chai.assert
     var scheduling = lymph.require("scheduling")
 
     describe("processing raw data from server", function () {
@@ -56,16 +54,22 @@ describe("scheduling", function () {
 
         it("extract the fields", function () {
             var result = scheduling.process(rawData)
-            console.log(result)
             assert.deepEqual(result[0], expectedData[0])
         })
     })
 
-    describe("a weeks view", function () {
+    describe.only("a weeks view", function () {
 
-        it("sanity", function () {
-            assert.equal(true, true)
-            console.log(scheduling.buildCustomView([]))
+        var view = scheduling.buildView(new Date("6/3/2013"), [])
+
+        console.log(view)
+
+        it("has 7 day in week", function () {
+            assert.equal(view.querySelectorAll("div.day").length, 7)
+        })
+
+        it("has 48 time slots in a day column", function () {
+            assert.equal(view.querySelector("div.day").querySelectorAll("div.time").length, 48)
         })
     })
 })

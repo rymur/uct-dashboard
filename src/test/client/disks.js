@@ -1,8 +1,6 @@
-var assert = chai.assert
-var client = lymph.require("lymph-client")
-
 describe("disks", function () {
 
+    var assert = chai.assert
     var disks = lymph.require("disks")
 
     describe("given raw device data from server", function () {

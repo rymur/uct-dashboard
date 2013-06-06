@@ -1,17 +1,42 @@
 lymph.define("scheduling", function (require) {
     
+    var h = require("lymph-client/html")
+
     return {
-        buildView: buildView, process: process, buildCustomView: buildCustomView
+        buildView: buildView, process: process
     }
 
-    function buildView (container, data) {
-        var cal = $(DIV({ id: "calendar" }))
-        container.append(cal)
-        cal.fullCalendar({editable:false, defaultView: "agendaWeek", events:data})
+    function buildView (startDate, data) {
+        return h.SECTION(daySlots().map(buildDayView))
+    }
+
+    function buildDayView (day) {
+        return h.DIV({ class:"day", dataDate: day }, timeSlots().map(buildTimeView))
+    }
+
+    function buildTimeView (time) {
+        return h.DIV({ class:"time", dataTime: time })
     }
 
     function extractComment (data) {
         return data.slice(data.indexOf(" ", 43)).trim()
+    }
+
+    function daySlots (startDate) {
+        var days = []
+        for (var i = 0; i < 7; i++) {
+            days.push(startDate)
+        }
+        return days
+    }
+
+    function timeSlots () {
+        var slots = []
+        for (var i = 1; i <= 24; i++) {
+            slots.push(i + ":00")
+            slots.push(i + ":30")
+        }
+        return slots
     }
 
     function extractFields (data) {
@@ -40,19 +65,5 @@ lymph.define("scheduling", function (require) {
     function process (rawData) {
         return rawData.split("\n").map(dataFromLine).map(extractFields)
     }
-
-
-    function buildCustomView (data) {
-        return SECTION(
-            DIV({ class:"day" }),
-            DIV({ class:"day" }),
-            DIV({ class:"day" }),
-            DIV({ class:"day" }),
-            DIV({ class:"day" }),
-            DIV({ class:"day" }),
-            DIV({ class:"day" })
-        )
-    }
-
 })
 

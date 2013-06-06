@@ -1,5 +1,7 @@
 lymph.define("disks", function (require) {
     
+    var h = require("lymph-client/html")
+
     var objects = {
         each: function (obj, fn) {
             for (var i in obj) {
@@ -13,13 +15,13 @@ lymph.define("disks", function (require) {
     }
 
     function buildView (data) {
-        return SECTION(
-            HEADER(I({ class: "icon-hdd" }), SPAN("Disks Usage")),
-            TABLE({ class:"widget" },
-                THEAD(
-                    TH("Name"), TH("Used"), TH("Free"), TH("Total")
+        return h.SECTION(
+            h.HEADER(h.I({ class: "icon-hdd" }), h.SPAN("Disks Usage")),
+            h.TABLE({ class:"widget" },
+                h.THEAD(
+                    h.TH("Name"), h.TH("Used"), h.TH("Free"), h.TH("Total")
                 ),
-                TBODY(data.map(buildItemView))
+                h.TBODY(data.map(buildItemView))
             )
         )
     }
@@ -28,15 +30,15 @@ lymph.define("disks", function (require) {
         var maxBytes = data.max / 2
         var freeBytes = data.free / 2
         var percent = percentageUsed(freeBytes, maxBytes)
-        return TR(
-            TD(data.name),
-            TD(buildProgressView(percent)),
-            TD({ class:"number"}, bytesToSize(freeBytes)),
-            TD({ class:"number"}, bytesToSize(maxBytes))
+        return h.TR(
+            h.TD(data.name),
+            h.TD(buildProgressView(percent)),
+            h.TD({ class:"number"}, bytesToSize(freeBytes)),
+            h.TD({ class:"number"}, bytesToSize(maxBytes))
         )
     }
     function buildProgressView (percentage) {
-        return METER({ low: "80", high: "95", max: "100", value: percentage, title: percentage + "% Used" })
+        return h.METER({ low: "80", high: "95", max: "100", value: percentage, title: percentage + "% Used" })
     }
 
     function percentageUsed (free, max) {
@@ -72,7 +74,6 @@ lymph.define("disks", function (require) {
             return "DISK2"
         }
         else {
-            console.log(vol)
             return null
         }
     }
