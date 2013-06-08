@@ -1,5 +1,0 @@
-AuthType Basic
-AuthName "SCANCO µCT"
-AuthOpenVMSUser On
-require valid-user
-#require user microct
