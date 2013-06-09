@@ -4,7 +4,7 @@ lymph.define("scheduling", function (require) {
     var d = require("lymph-core/dates")
     var h = require("lymph-client/html")
 
-    return u.expose(buildView, process, timeSlotLabels, daySlotLabels, daySlotColumns)
+    return u.expose(buildView, process, timeSlotLabels, daySlotColumns)
 
     function buildView (startDate, data) {
 
@@ -25,6 +25,19 @@ lymph.define("scheduling", function (require) {
 
     function timeSlotLabels () {
 
+        function humanHour (h) {
+            return h % 12 || 12
+        }
+
+        function attachAmPM (h) {
+            return (h < 12) ? h + "am" : h + "pm"
+        }
+
+        function parseTime (time) {
+            var t = time.split(":")
+            return { h: t[0], m: t[1] }
+        }
+
         function formatTimeSlotLabel (time) {
             var t = parseTime(time)
             return (t.m == "30") ? h.space : attachAmPM(humanHour(t.h))
@@ -41,25 +54,6 @@ lymph.define("scheduling", function (require) {
         return h.DIV({ class: "day-label" },
             h.DIV(h.space),
             timeSlots().map(timeSlotLabelsItem)
-        )
-    }
-
-    function daySlotLabels (monday) {
-
-        function formatDaySlotLabel (date) {
-            var dw = d.translateDay(date.getDay())
-            var mo = (date.getMonth() + 1)
-            var da = date.getDate()
-            return dw + " " + mo + "/" + da
-        }
-
-        function daySlotLabelsItem (date) {
-            return h.DIV({ class: "day", dataDate: date }, formatDaySlotLabel(date))
-        }
-
-        return h.DIV({ class: "day-slot-labels" },
-            h.DIV({ class: "day" }, h.space),
-            daySlots(monday).map(daySlotLabelsItem)
         )
     }
 
@@ -90,11 +84,6 @@ lymph.define("scheduling", function (require) {
         return daySlots(monday).map(daySlotRows)
     }
 
-    function extractComment (data) {
-        return data.slice(data.indexOf(" ", 43)).trim()
-    }
-
-
     function daySlots (startDate) {
         var days = []
         for (var i = 0; i < 7; i++) {
@@ -112,49 +101,36 @@ lymph.define("scheduling", function (require) {
         return slots
     }
 
-    function extractFields (data) {
-        var fields = data.split(" ")
-        var comment = extractComment(data)
-        return {
-            scanner: fields[0],
-            startDate: fields[1],
-            startTime: fields[2],
-            start: new Date(fields[1] + " " + fields[2]).toString(),
-            endDate:   fields[3],
-            endTime:   fields[4],
-            end: new Date(fields[3] + " " + fields[4]).toString(),
-            account:   fields[5],
-            comment: comment,
-            title: fields[5] + ": " + comment,
-            allDay: false,
-            backgroundColor: "blue"
-        }
-    }
-
-    function dataFromLine (line) {
-        return line.split("|")[0]
-    }
-
     function process (rawData) {
+
+        function extractComment (data) {
+            return data.slice(data.indexOf(" ", 43)).trim()
+        }
+
+        function extractFields (data) {
+            var fields = data.split(" ")
+            var comment = extractComment(data)
+            return {
+                scanner: fields[0],
+                startDate: fields[1],
+                startTime: fields[2],
+                start: new Date(fields[1] + " " + fields[2]).toString(),
+                endDate:   fields[3],
+                endTime:   fields[4],
+                end: new Date(fields[3] + " " + fields[4]).toString(),
+                account:   fields[5],
+                comment: comment,
+                title: fields[5] + ": " + comment,
+                allDay: false,
+                backgroundColor: "blue"
+            }
+        }
+
+        function dataFromLine (line) {
+            return line.split("|")[0]
+        }
+
         return rawData.split("\n").map(dataFromLine).map(extractFields)
     }
-
-    function humanHour (h) {
-        return h % 12 || 12
-    }
-
-    function leadingZeroHour (h) {
-        return (h < 10) ? "0" + h : " " + h
-    }
-
-    function attachAmPM (h) {
-        return (h < 12) ? h + "am" : h + "pm"
-    }
-
-    function parseTime (time) {
-        var t = time.split(":")
-        return { h: t[0], m: t[1] }
-    }
-
 })
 

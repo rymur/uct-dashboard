@@ -5,7 +5,11 @@ describe("scheduling", function () {
 
     describe("processing raw data from server", function () {
 
-        var rawData = "40 2013-05-24 16:00:00 2013-05-24 17:00:00 fe_nf1 Jean nf1 col2 bone | N/A\n40 2013-05-15 17:00:00 2013-05-16 06:00:00 fe_nasa VBX | N/A\n40 2013-06-07 16:00:00 2013-06-07 21:00:00 orear_plasmin  | N/A"
+        var rawData = [
+            "40 2013-05-24 16:00:00 2013-05-24 17:00:00 fe_nf1 Jean nf1 col2 bone | N/A",
+            "40 2013-05-15 17:00:00 2013-05-16 06:00:00 fe_nasa VBX | N/A",
+            "40 2013-06-07 16:00:00 2013-06-07 21:00:00 orear_plasmin  | N/A"
+        ].join("\n")
 
         var expectedData = [
             { 
@@ -58,7 +62,7 @@ describe("scheduling", function () {
         })
     })
 
-    describe.only("a weeks view", function () {
+    describe("a weeks view", function () {
 
         it("has a label for each hour", function () {
             var view = scheduling.timeSlotLabels()
