@@ -85,20 +85,18 @@ section.calendar {
     overflow: hidden;
 }
 
-div.hours {
-    float: left;
-    width: 5%;
+div.day-slot-labels {
+    overflow: hidden;
 }
 
-div.hours div.hour {
-    border-bottom: 1px solid #ccc;
-    text-align: right;
+div.day-slot-labels div.day {
+    float: left;
+    width: 13%;
 }
 
 div.day-label {
     float: left;
-    width: 3%;
-    position: relative;
+    width: 5%;
 }
 
 div.day-label .half {
@@ -116,39 +114,50 @@ div.day {
     position: relative;
 }
 
-div.day div.time {
-    border-top: 1px dotted #ccc;
-    border-left: 1px dotted #ccc;
-}
-
 div.day div.title {
     background-color: #ccc;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-div.event {
-    position: absolute;
-    top: 100px;
-    height: 79px;
-    width: 45%;
-    overflow: hidden;
-    overflow-text: ellipsis;
+div.day div.time {
+    border-top: 1px dotted #ccc;
+    border-left: 1px dotted #ccc;
 }
 
-div.ct40 {
-    border: 1px solid blue;
-    background-color: rgb(126, 126, 247);
-    left: 3%;
-}
+/*div.hours {*/
+    /*float: left;*/
+    /*width: 5%;*/
+/*}*/
 
-div.ct50 {
-    border: 1px solid green;
-    background-color: green;
-    left: 51%;
-}
+/*div.hours div.hour {*/
+    /*border-bottom: 1px solid #ccc;*/
+    /*text-align: right;*/
+/*}*/
 
-#thing {
-    border: 1px solid red;
-}
+
+/*div.event {*/
+    /*position: absolute;*/
+    /*top: 100px;*/
+    /*height: 79px;*/
+    /*width: 45%;*/
+    /*overflow: hidden;*/
+    /*overflow-text: ellipsis;*/
+/*}*/
+
+/*div.ct40 {*/
+    /*border: 1px solid blue;*/
+    /*background-color: rgb(126, 126, 247);*/
+    /*left: 3%;*/
+/*}*/
+
+/*div.ct50 {*/
+    /*border: 1px solid green;*/
+    /*background-color: green;*/
+    /*left: 51%;*/
+/*}*/
+
+/*#thing {*/
+    /*border: 1px solid red;*/
+/*}*/
 
