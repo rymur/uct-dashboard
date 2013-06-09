@@ -1,18 +1,26 @@
-$ say := write sys$output
+$ say := write/symbol sys$output
 $ say "Content-Type: text/plain"
 $ say ""
 $
-$ data_dir = "disk1:[microct50.www.data.current]"
-$
+$ DATA_DIR := DISK1:[MICROCT50.DATA.DATASHBOARD]
+$ FIRST = 1
+$ say "["
 $ loop:
-$   record_file_name = f$search("''data_dir'%%%%%%%_%%%%%%%.TXT", 1)
-$   if record_file_name .nes. ""
+$   RECORD_FILE = f$search("''DATA_DIR'*.TXT", 1)
+$   if RECORD_FILE .nes. ""
 $   then
-$     open record_file 'record_file_name'
-$     read/end_of_file=eof record_file record
-$     say record
+$     open INPUT 'RECORD_FILE'
+$     read/end_of_file=eof INPUT RECORD
+$     if FIRST
+$     then
+$       say RECORD
+$       FIRST = 0
+$     else
+$       say ",", RECORD
+$     endif
 $     eof:
-$     close record_file
+$     close INPUT
 $     goto loop
 $   endif
 $ loop_end:
+$ say "]"
