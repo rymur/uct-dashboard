@@ -8,57 +8,75 @@ describe("scheduling", function () {
         var rawData = [
             "40 2013-05-24 16:00:00 2013-05-24 17:00:00 fe_nf1 Jean nf1 col2 bone | N/A",
             "40 2013-05-15 17:00:00 2013-05-16 06:00:00 fe_nasa VBX | N/A",
-            "40 2013-06-07 16:00:00 2013-06-07 21:00:00 orear_plasmin  | N/A"
+            "40 2013-06-07 16:00:00 2013-06-08 21:00:00 orear_plasmin  | N/A"
         ].join("\n")
 
-        var expectedData = [
+        var data1 = [
             { 
                 scanner: "40",
-                startDate: "2013-05-24",
-                startTime: "16:00:00",
-                start: "Fri May 24 2013 16:00:00 GMT-0500 (CDT)",
-                endDate: "2013-05-24",
-                endTime: "17:00:00",
-                end: "Fri May 24 2013 17:00:00 GMT-0500 (CDT)",
+                start: new Date("Fri May 24 2013 16:00:00 GMT-0500 (CDT)"),
+                end: new Date("Fri May 24 2013 17:00:00 GMT-0500 (CDT)"),
                 account: "fe_nf1",
-                comment: "Jean nf1 col2 bone",
-                title: "fe_nf1: Jean nf1 col2 bone",
-                allDay: false,
-                backgroundColor: "blue"
+                comment: "Jean nf1 col2 bone"
             },
             { 
                 scanner: "40",
-                startDate: "2013-05-15",
-                startTime: "17:00:00",
-                start: "Wed May 15 2013 17:00:00 GMT-0500 (CDT)",
-                endDate: "2013-05-16",
-                endTime: "06:00:00",
-                end: "Thu May 16 2013 06:00:00 GMT-0500 (CDT)",
+                start: new Date("Wed May 15 2013 17:00:00 GMT-0500 (CDT)"),
+                end: new Date("Thu May 16 2013 06:00:00 GMT-0500 (CDT)"),
                 account: "fe_nasa",
-                comment: "VBX",
-                title: "fe_nasa: VBX",
-                allDay: false,
-                backgroundColor: "blue"
+                comment: "VBX"
             },
             { 
                 scanner: "40",
-                startDate: "2013-06-07",
-                startTime: "16:00:00",
-                start: "Fri Jun 07 2013 16:00:00 GMT-0500 (CDT)",
-                endDate: "2013-06-07",
-                endTime: "21:00:00",
-                end: "Fri Jun 07 2013 21:00:00 GMT-0500 (CDT)",
+                start: new Date("Fri Jun 07 2013 16:00:00 GMT-0500 (CDT)"),
+                end: new Date("Fri Jun 07 2013 21:00:00 GMT-0500 (CDT)"),
                 account: "fe_nasa",
-                comment: "",
-                title: "fe_nasa: ",
-                allDay: false,
-                backgroundColor: "blue"
+                comment: ""
             }
         ]
 
         it("extract the fields", function () {
             var result = scheduling.process(rawData)
-            assert.deepEqual(result[0], expectedData[0])
+            assert.deepEqual(result[0], data1[0])
+        })
+
+        it("breaks multi day events into separate events", function () {
+            var result = scheduling.separate(data1)
+
+            var data2 = [
+                { 
+                    scanner: "40",
+                    start: new Date("Fri May 24 2013 16:00:00 GMT-0500 (CDT)"),
+                    end: new Date("Fri May 24 2013 17:00:00 GMT-0500 (CDT)"),
+                    account: "fe_nf1",
+                    comment: "Jean nf1 col2 bone"
+                },
+                { 
+                    scanner: "40",
+                    start: new Date("Wed May 15 2013 17:00:00 GMT-0500 (CDT)"),
+                    end: new Date("Wed May 15 2013 23:59:59:999 GMT-0500 (CDT)"),
+                    account: "fe_nasa",
+                    comment: "VBX"
+                },
+                { 
+                    scanner: "40",
+                    start: new Date("Thu May 16 2013 00:00:00 GMT-0500 (CDT)"),
+                    end: new Date("Thu May 16 2013 06:00:00 GMT-0500 (CDT)"),
+                    account: "fe_nasa",
+                    comment: "VBX"
+                },
+                { 
+                    scanner: "40",
+                    start: new Date("Fri Jun 07 2013 16:00:00 GMT-0500 (CDT)"),
+                    end: new Date("Fri Jun 07 2013 21:00:00 GMT-0500 (CDT)"),
+                    account: "fe_nasa",
+                    comment: ""
+                }
+            ]
+
+            console.log(result)
+
+            assert.deepEqual(result, data2)
         })
     })
 
@@ -69,7 +87,7 @@ describe("scheduling", function () {
             var slots = view.querySelectorAll("div")
             assert.equal(slots.length, 49)
             assert.equal(view.childNodes[0].innerHTML, "&nbsp;")
-            assert.equal(view.childNodes[1].innerHTML, "1am")
+            assert.equal(view.childNodes[1].innerHTML, "12am")
             assert.equal(view.childNodes[2].innerHTML, "&nbsp;")
         })
 

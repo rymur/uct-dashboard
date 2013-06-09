@@ -17,8 +17,12 @@ lymph.define("main", function (require) {
         $("header.title nav a").removeClass("active")
         $("#navScheduling").addClass("active")
         mainEl.html("")
-        //var events = scheduling.process(rawData)
-        mainEl.append(scheduling.buildView(new Date(), []))
+        ajax.get("/cgi-bin/faces_data.com", function (rawData) {
+            var data0 = scheduling.process(rawData)
+            var data1 = scheduling.separate(data0)
+            window.debugdata = data1
+            mainEl.append(scheduling.buildView(new Date(), data1))
+        })
     })
 
     routie("/admin", function () {

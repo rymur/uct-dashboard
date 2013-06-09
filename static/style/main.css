@@ -125,6 +125,14 @@ div.day div.time {
     border-left: 1px dotted #ccc;
 }
 
+div.event {
+    position: absolute;
+    top: 89px;
+    height: 108px;
+    background-color: rgb(169, 169, 199);
+    width: 98px;
+}
+
 /*div.hours {*/
     /*float: left;*/
     /*width: 5%;*/
