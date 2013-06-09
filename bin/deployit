@@ -11,5 +11,7 @@ lftp -u $CONNECTION_INFO -e "\
     put -a lib/index-client.js -o index.js; \
     cd ../cgi-bin; \
     mput -a static/cgi-bin/*.com; \
+    cd ../style; \
+    put -a static/style/main.css; \
     bye \
 " 
