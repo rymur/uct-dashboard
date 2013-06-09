@@ -4,6 +4,7 @@ var express = require("express")
 var http = require("http")
 var path = require("path")
 var fs = require("fs")
+var request = require("request")
 
 var app = express()
 
@@ -40,6 +41,28 @@ app.get("/lib/index-client.js.map", function (req, res) {
 
 app.get("/cgi-bin/disks.com", function (req, res) {
     res.sendfile("misc/disks.json")
+})
+
+app.get("/cgi-bin/faces.com", function (req, res) {
+
+    var data = {
+        account:"VUIIS_IVIS",
+        savegrp:"on",
+        user:"manager",
+        saveusr:"on",
+        savepwd:"on",
+        passwd:"japon",
+        end:"0"
+    }
+
+    request.post("http://faces.ccrc.uga.edu/ccrcfaces/login.php", function (e, r, body) {
+        var pk = body.match(/NAME='pk' VALUE='([0-9a-z]*)'/)[1]
+        res.send({pk: pk})
+    }).form(data)
+})
+
+app.get("/cgi-bin/measurements.com", function (req, res) {
+    res.sendfile("misc/measurements.json")
 })
 
 app.get("/cgi-bin/authorize.com", function (req, res) {
