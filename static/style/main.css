@@ -130,7 +130,9 @@ div.event {
     top: 89px;
     height: 108px;
     background-color: rgb(169, 169, 199);
-    width: 98px;
+    width: 45%;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /*div.hours {*/

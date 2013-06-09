@@ -27,9 +27,9 @@ lymph.define("scheduling", function (require) {
             if (day != null) {
                 var ediv = h.DIV({ class: "event" }, e.account)
                 var startHour = e.start.getHours()
-                var startPOS = (startHour * 2 * 20) + 19
+                var startPOS = (startHour * 20) + 19
                 ediv.style.top = startPOS + "px"
-                ediv.style.height = (hourDiff(e.end, e.start) * 40) + "px"
+                ediv.style.height = (hourDiff(e.end, e.start) * 20) + "px"
                 day.appendChild(ediv)
             }
         })
@@ -76,12 +76,8 @@ lymph.define("scheduling", function (require) {
             return (t.m == "30") ? h.space : humanHour(t.h) + getAMPM(t.h)
         }
 
-        function isHalfHour (time) {
-            return parseTime(time).m == "30"
-        }
-
         function timeSlotLabelsItem (time) {
-            return h.DIV({ class: isHalfHour(time) ? "half" : "hour" }, formatTimeSlotLabel(time))
+            return h.DIV({ class: "hour" }, formatTimeSlotLabel(time))
         }
 
         return h.DIV({ class: "day-label" },
@@ -133,7 +129,6 @@ lymph.define("scheduling", function (require) {
         var slots = []
         for (var i = 0; i <= 23; i++) {
             slots.push(i + ":00")
-            slots.push(i + ":30")
         }
         return slots
     }
