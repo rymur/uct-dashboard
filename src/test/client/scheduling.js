@@ -60,9 +60,8 @@ describe("scheduling", function () {
 
     describe.only("a weeks view", function () {
 
-        it("has hourly labels for the time slots", function () {
-            var view = scheduling.buildTimeSlotLabels()
-            console.log(view)
+        it("has a label for each hour", function () {
+            var view = scheduling.timeSlotLabels()
             var slots = view.querySelectorAll("div")
             assert.equal(slots.length, 49)
             assert.equal(view.childNodes[0].innerHTML, "&nbsp;")
@@ -70,12 +69,16 @@ describe("scheduling", function () {
             assert.equal(view.childNodes[2].innerHTML, "&nbsp;")
         })
 
-        //it("has 7 day in week", function () {
-            //assert.equal(view.querySelectorAll("div.day").length, 7)
-        //})
+        it("has a label for the day of week and date", function () {
+            var slots = scheduling.daySlotColumns(new Date(2013, 5, 3))
+            assert.equal(slots[0].childNodes[0].innerHTML, "Monday 6/3")
+        })
 
-        //it("has 48 time slots in a day column", function () {
-            //assert.equal(view.querySelector("div.day").querySelectorAll("div.time").length, 48)
+        //it("has 7 columns of time slots for each day of week", function () {
+            //var slots = scheduling.daySlotColumns(new Date(2013, 5, 3))
+            //assert.equal(slots.length, 7)
+            //assert.equal(slots[0].querySelectorAll("div").length, 48)
+            //assert.equal(slots[1].querySelectorAll("div").length, 48)
         //})
 
     })

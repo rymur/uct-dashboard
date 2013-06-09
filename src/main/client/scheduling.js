@@ -4,64 +4,96 @@ lymph.define("scheduling", function (require) {
     var d = require("lymph-core/dates")
     var h = require("lymph-client/html")
 
-    return u.expose(buildView, process, buildTimeSlotLabels)
+    return u.expose(buildView, process, timeSlotLabels, daySlotLabels, daySlotColumns)
 
     function buildView (startDate, data) {
-        var md = mondayDate(startDate)
+
+        var d = new Date(startDate)
+        var day = d.getDay()
+        var diff = d.getDate() - day + (day == 0 ? -6 : 1)
+        monday = new Date(d.setDate(diff))
+
         return h.SECTION(
             h.HEADER(
                 h.I({ class: "icon-calendar" }),
                 h.SPAN("Schedule")
             ),
-            buildTimeSlotLabels(),
-            daySlots(md).map(buildDateView)
+            timeSlotLabels(),
+            daySlotColumns(monday)
         )
     }
 
-    function buildTimeSlotLabels () {
-        console.log("foo")
+    function timeSlotLabels () {
+
+        function formatTimeSlotLabel (time) {
+            var t = parseTime(time)
+            return (t.m == "30") ? h.space : attachAmPM(humanHour(t.h))
+        }
+
+        function isHalfHour (time) {
+            return parseTime(time).m == "30"
+        }
+
+        function timeSlotLabelsItem (time) {
+            return h.DIV({ class: isHalfHour(time) ? "half" : "hour" }, formatTimeSlotLabel(time))
+        }
+
         return h.DIV({ class: "day-label" },
             h.DIV(h.space),
-            timeSlots().map(function (time) {
-                return h.DIV({ class: isHalfHour(time) ? "half" : "hour" }, formatTimeSlotLabel(time))
-            })
+            timeSlots().map(timeSlotLabelsItem)
         )
     }
 
-    function buildTimeLabelView () {
-        return h.DIV({ class: "day" },
-            [h.DIV(h.space)].concat(timeSlots().map(buildTimeLabelItemView))
+    function daySlotLabels (monday) {
+
+        function formatDaySlotLabel (date) {
+            var dw = d.translateDay(date.getDay())
+            var mo = (date.getMonth() + 1)
+            var da = date.getDate()
+            return dw + " " + mo + "/" + da
+        }
+
+        function daySlotLabelsItem (date) {
+            return h.DIV({ class: "day", dataDate: date }, formatDaySlotLabel(date))
+        }
+
+        return h.DIV({ class: "day-slot-labels" },
+            h.DIV({ class: "day" }, h.space),
+            daySlots(monday).map(daySlotLabelsItem)
         )
     }
 
-    function buildDateView (date) {
-        return h.DIV({ class: "day", dataDate: date },
-            [buildDateTitleView(date)].concat(timeSlots().map(buildTimeView))
-        )
-    }
+    function daySlotColumns (monday) {
 
-    function buildDateTitleView (date) {
-        return h.DIV({ class: "" }, d.translateDay(date.getDay()))
-    }
+        function formatDaySlotLabel (date) {
+            var dw = d.translateDay(date.getDay())
+            var mo = (date.getMonth() + 1)
+            var da = date.getDate()
+            return dw + " " + mo + "/" + da
+        }
 
-    function buildTimeLabelItemView (time) {
-        return h.DIV({ class:"time", dataTime: time }, time)
-    }
+        function daySlotLabel (date) {
+            return h.DIV(formatDaySlotLabel(date))
+        }
 
-    function buildTimeView (time) {
-        return h.DIV({ class:"time", dataTime: time }, h.space)
+        function daySlotRowsItem (time) {
+            return h.DIV({ class:"time", dataTime: time }, h.space)
+        }
+
+        function daySlotRows (date) {
+            return h.DIV({ class: "day" },
+                daySlotLabel(date),
+                timeSlots().map(daySlotRowsItem)
+            )
+        }
+
+        return daySlots(monday).map(daySlotRows)
     }
 
     function extractComment (data) {
         return data.slice(data.indexOf(" ", 43)).trim()
     }
 
-    function mondayDate(startDate) {
-        var d = new Date(startDate)
-        var day = d.getDay()
-        var diff = d.getDate() - day + (day == 0 ? -6 : 1)
-        return new Date(d.setDate(diff))
-    }
 
     function daySlots (startDate) {
         var days = []
@@ -122,20 +154,6 @@ lymph.define("scheduling", function (require) {
     function parseTime (time) {
         var t = time.split(":")
         return { h: t[0], m: t[1] }
-    }
-
-    function isHalfHour (time) {
-        return parseTime(time).m == "30"
-    }
-
-    function formatTimeSlotLabel (time) {
-        var t = parseTime(time)
-        if (t.m == "30") {
-            return h.space
-        }
-        else {
-            return attachAmPM(humanHour(t.h))
-        }
     }
 
 })
