@@ -48,7 +48,7 @@ app.get("/cgi-bin/faces_data.com", function (req, res) {
     res.sendfile("dat/faces_data.txt")
 })
 
-app.get("/cgi-bin/faces.com", function (req, res) {
+app.get("/cgi-bin/faces_login.com", function (req, res) {
 
     var data = {
         account:"VUIIS_IVIS",
@@ -61,8 +61,7 @@ app.get("/cgi-bin/faces.com", function (req, res) {
     }
 
     request.post("http://faces.ccrc.uga.edu/ccrcfaces/login.php", function (e, r, body) {
-        var pk = body.match(/NAME='pk' VALUE='([0-9a-z]*)'/)[1]
-        res.send({pk: pk})
+        res.send(body.match(/NAME='pk' VALUE='([0-9a-z]*)'/)[1])
     }).form(data)
 })
 
