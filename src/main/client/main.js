@@ -20,9 +20,11 @@ lymph.define("main", function (require) {
             $("header.title nav a").removeClass("active")
             $("#navScheduling").addClass("active")
             mainEl.html("")
-            ajax.get("/cgi-bin/faces_data.com", function (rawData) {
-                var data = scheduling.separate(scheduling.process(rawData))
-                scheduling.buildView(mainEl, new Date(), data)
+            ajax.get("/cgi-bin/faces_login.com", function (pk) {
+                ajax.get("/cgi-bin/faces_data.com?pk=" + pk, function (rawData) {
+                    var data = scheduling.separate(scheduling.process(rawData))
+                    scheduling.buildView(mainEl, new Date(), data)
+                })
             })
         },
 

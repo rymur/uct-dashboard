@@ -75,7 +75,7 @@ lymph.define("scheduling", function (require) {
 
         function formatTimeSlotLabel (time) {
             var t = parseTime(time)
-            return (t.m == "30") ? h.space : humanHour(t.h) + getAMPM(t.h)
+            return (t.m == "30") ? h.space() : humanHour(t.h) + getAMPM(t.h)
         }
 
         function timeSlotLabelsItem (time) {
@@ -83,7 +83,7 @@ lymph.define("scheduling", function (require) {
         }
 
         return h.DIV({ class: "day-label" },
-            h.DIV(h.space),
+            h.DIV(h.space()),
             timeSlots().map(timeSlotLabelsItem)
         )
     }
@@ -106,7 +106,7 @@ lymph.define("scheduling", function (require) {
         }
 
         function daySlotRowsItem (time) {
-            return h.DIV({ class:"time", dataTime: time }, h.space)
+            return h.DIV({ class:"time", dataTime: time }, h.space())
         }
 
         function daySlotRows (date) {
