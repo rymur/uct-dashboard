@@ -8,6 +8,8 @@ lymph.define("main", function (require) {
 
     var mainEl = $("#main")
 
+    var facesLogin = facesLoginCacher(facesKey())
+
     var router = new util.Router({}, {
         "/": function () {
             $("header.title nav a").removeClass("active")
@@ -20,7 +22,7 @@ lymph.define("main", function (require) {
             $("header.title nav a").removeClass("active")
             $("#navScheduling").addClass("active")
             mainEl.html("")
-            ajax.get("/cgi-bin/faces_login.com", function (pk) {
+            facesLogin(function (pk) {
                 ajax.get("/cgi-bin/faces_data.com?pk=" + pk, function (rawData) {
                     var data = scheduling.separate(scheduling.process(rawData))
                     scheduling.buildView(mainEl, new Date(), data)
@@ -45,6 +47,60 @@ lymph.define("main", function (require) {
     router.start(function(){
         console.log("finished starting app")
     })
+
+    function facesLoginCacher (keyStorage) {
+        return function (fn) {
+
+            var key = keyStorage.get()
+
+            if (needsRefresh(key)) {
+                console.log("from server ===>")
+                ajax.get("/cgi-bin/faces_login.com", function (pk) {
+                    keyStorage.set({
+                        value: pk,
+                        dateCached: Date.now()
+                    })
+                    fn(pk)
+                })
+            }
+            else {
+                console.log("from cache --->")
+                fn(key.value)
+            }
+        }
+
+        function needsRefresh (key) {
+            if (key.value == null) {
+                return true
+            } 
+            else if (key.dateCached == null) {
+                return true
+            }
+            else {
+                return ((Date.now() - key.dateCached) > (1000 * 60 * 30))
+            }
+        }
+    }
+
+    function facesKey () {
+        var keyName = "faces-key"
+        return {
+            get: function  () {
+                var rawKey = sessionStorage.getItem(keyName)
+                if (rawKey == null) {
+                    return {
+                        value: null, dateCached: null
+                    }
+                }
+                else {
+                    return JSON.parse(rawKey)
+                }
+            },
+            set: function (key) {
+                sessionStorage.setItem(keyName, JSON.stringify(key))
+            }
+        }
+    }
 })
 
 

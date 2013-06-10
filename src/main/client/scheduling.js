@@ -49,7 +49,6 @@ lymph.define("scheduling", function (require) {
         if (date1.getMinutes() > 0) {
             h1 = h1 + 1
         }
-        console.log(h2, h1)
         return h1 - h2
     }
 
