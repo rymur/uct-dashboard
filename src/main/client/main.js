@@ -2,13 +2,14 @@ lymph.define("main", function (require) {
 
     var ajax = require("lymph-client/ajax")
     var util = require("lymph-client/utils")
+    var data = require("data")
     var disks = require("disks")
     var scheduling = require("scheduling")
     var measurements = require("measurements")
 
     var mainEl = $("#main")
 
-    var facesLogin = facesLoginCacher(facesKey())
+    var facesLogin = facesLoginCacher(data.facesKey())
 
     var router = new util.Router({}, {
         "/": function () {
@@ -77,37 +78,9 @@ lymph.define("main", function (require) {
                 return true
             }
             else {
-                return ((Date.now() - key.dateCached) > (1000 * 60 * 30))
-            }
-        }
-    }
-
-    function facesKey () {
-        var keyName = "faces-key"
-        return {
-            get: function  () {
-                var rawKey = sessionStorage.getItem(keyName)
-                if (rawKey == null) {
-                    return {
-                        value: null, dateCached: null
-                    }
-                }
-                else {
-                    return JSON.parse(rawKey)
-                }
-            },
-            set: function (key) {
-                sessionStorage.setItem(keyName, JSON.stringify(key))
+                return ((Date.now() - key.dateCached) > (1000 * 60 * 5))
             }
         }
     }
 })
-
-
-    //$.get("/cgi-bin/faces.com", function (data) {
-        //var url = "http://faces.ccrc.uga.edu/ccrcfaces/data.php?user=manager&rndm=563405192&account=VUIIS_IVIS&rindex=9&pk="+ data.pk + "&mode=0"
-        //$.get(url, function (data) {
-            //console.log(data)
-        //})
-    //})
 
