@@ -6,12 +6,12 @@ lymph.define("scheduling", function (require) {
 
     return u.expose(buildView, process, timeSlotLabels, daySlotColumns, separate)
 
-    function buildView (startDate, data) {
+    function buildView (mainEl, startDate, data) {
 
         var d = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate())
         var day = d.getDay()
         var diff = d.getDate() - day + (day == 0 ? -6 : 1)
-        monday = new Date(d.setDate(diff))
+        var monday = new Date(d.setDate(diff))
 
         var view =  h.SECTION(
             h.HEADER(
@@ -22,14 +22,16 @@ lymph.define("scheduling", function (require) {
             daySlotColumns(monday)
         )
 
+        mainEl.append(view)
+
         data.forEach(function (e) {
             var day = document.getElementById(dateId(e.start))
             if (day != null) {
-                var ediv = h.DIV({ class: "event" }, e.account)
+                var ediv = h.DIV({ class: "event-" + e.scanner + " " + e.part }, e.account)
                 var startHour = e.start.getHours()
-                var startPOS = (startHour * 20) + 19
+                var startPOS = ((startHour * 20) + 2) + 20
                 ediv.style.top = startPOS + "px"
-                ediv.style.height = (hourDiff(e.end, e.start) * 20) + "px"
+                ediv.style.height = ((hourDiff(e.end, e.start) * 20) - 7) + "px"
                 day.appendChild(ediv)
             }
         })
@@ -100,7 +102,7 @@ lymph.define("scheduling", function (require) {
         }
 
         function daySlotLabel (date) {
-            return h.DIV(formatDaySlotLabel(date))
+            return h.DIV({ class:"day-title" }, formatDaySlotLabel(date))
         }
 
         function daySlotRowsItem (time) {
@@ -149,7 +151,8 @@ lymph.define("scheduling", function (require) {
                 start: start,
                 end: end,
                 account:   fields[5],
-                comment: comment
+                comment: comment,
+                part: "full"
             }
         }
 
@@ -189,18 +192,22 @@ lymph.define("scheduling", function (require) {
                     start: e.start,
                     end: e.end,
                     account: e.account,
-                    comment: e.comment
+                    comment: e.comment,
+                    part: e.part
                 }
 
                 if (i == firstDay) {
                     event.end = new Date(new Date(d1.getFullYear(), d1.getMonth(), i, 24, 0, 0, 0) - 1)
+                    event.part = "begin"
                 }
                 else if (i == lastDay) {
                     event.start = new Date(d1.getFullYear(), d1.getMonth(), i, 0, 0, 0, 0)
+                    event.part = "end"
                 }
                 else {
                     event.start = new Date(d1.getFullYear(), d1.getMonth(), i, 0, 0, 0, 0)
                     event.end = new Date(d1.getFullYear(), d1.getMonth(), i, 24, 0, 0, 0)
+                    event.part = "middle"
                 }
 
                 days.push(event)

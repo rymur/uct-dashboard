@@ -36,16 +36,17 @@ header.title span {
 
 .dashboard {
     margin: 10px;
-    width: 80%;
 }
 
 .dashboard header {
-    font-size: x-large;
+    font-size: xx-large;
+    margin-bottom: 10px;
 }
 
 .dashboard header span {
     margin-left: 10px;
     text-align: left;
+    font-size: xx-large;
 }
 
 .dashboard section {
@@ -97,6 +98,9 @@ div.day-slot-labels div.day {
 div.day-label {
     float: left;
     width: 5%;
+    border-left: 1px solid #ccc;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
 }
 
 div.day-label .half {
@@ -108,10 +112,20 @@ div.day-label .hour {
     border-top: 1px solid #ccc;
 }
 
+div.day-title {
+    text-align: center;
+}
+
 div.day {
     float: left;
     width: 13%;
     position: relative;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+}
+
+div.day:last-child {
+    border-right: 1px solid #ccc;
 }
 
 div.day div.title {
@@ -125,14 +139,47 @@ div.day div.time {
     border-left: 1px dotted #ccc;
 }
 
-div.event {
+div.event-40 {
+    font-size: small;
+    left: 3%;
     position: absolute;
-    top: 89px;
-    height: 108px;
     background-color: rgb(169, 169, 199);
-    width: 45%;
+    width: 95%;
     overflow: hidden;
     text-overflow: ellipsis;
+    border: 1px solid blue;
+}
+
+div.event-40:hover {
+    background-color: rgb(169, 169, 100);
+}
+
+div.event-50 {
+    font-size: small;
+    left: 3%;
+    position: absolute;
+    background-color: rgba(255, 153, 0, 0.75);
+    width: 95%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border: 1px solid rgb(187, 113, 0);
+}
+
+div.event-50:hover {
+    background-color: rgb(255, 175, 0);
+}
+
+div.middle {
+    border-bottom: 2px dashed rgb(65,65,65);
+    border-top: 2px dashed rgb(65,65,65);
+}
+
+div.begin {
+    border-bottom: 2px dashed rgb(65,65,65);
+}
+
+div.end {
+    border-top: 2px dashed rgb(65,65,65);
 }
 
 /*div.hours {*/
