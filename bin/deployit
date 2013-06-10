@@ -6,12 +6,14 @@ lftp -u $CONNECTION_INFO -e "\
     cd www; \
     put -a static/index.html; \
     cd lib; \
-    put -a node_modules/lymph-core/lib/index-browser.js -o lymph-core.js; \
-    put -a node_modules/lymph-client/lib/index-browser.js -o lymph-client.js; \
-    put -a lib/index-client.js -o index.js; \
+    put node_modules/lymph-core/lib/index-browser.js -o lymph-core.js; \
+    put node_modules/lymph-client/lib/index-browser.js -o lymph-client.js; \
+    put lib/index-client.js -o index.js; \
     cd ../cgi-bin; \
     mput -a static/cgi-bin/*.com; \
-    cd ../style; \
-    put -a static/style/main.css; \
+    cd ../style/css; \
+    mput -a static/style/css/*.css; \
+    cd ../../style/fonts; \
+    mput -a static/style/font/*; \
     bye \
 " 
