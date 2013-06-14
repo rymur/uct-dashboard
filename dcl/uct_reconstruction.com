@@ -10,18 +10,17 @@ $! P1 = RSQ-file, P2 = Slice-Nr, P3 = Log-file of batch job, P4 = Delete logfile
 $!
 $ IF P4 .NES. ""
 $ THEN
-$   DELETE/NOLOG/NOCONFIRM 'P3' ! Delete LOG-File of batch-job if
-$ EXIT                          ! finished successful
+$   @um:uct_dashboard_logger "e_rc" "''P1'" "''P2'"
+$   DELETE/NOLOG/NOCONFIRM 'P3' 
+$   EXIT
 $ ENDIF
 $!
 $ LOGFILE = F$SEARCH("''P3'")           ! get name & version nr of logfile
+$ @um:uct_dashboard_logger "e_rs" "''P1'" "''P2'"
 $ UCT_RECONSTRUCT :== $UCT_RECONSTRUCTION
 $ UCT_RECONSTRUCT 'P1' 'P2'
 $ IF $STATUS .EQ. 0
 $ THEN
-$   open/append RECONS_LOG MICROCT_USER:[DATA.DASHBOARD]RECONS.LOG
-$   write RECONS_LOG P1 + "," + P2
-$   close RECONS_LOG
 $   VERSION = F$PARSE(LOGFILE,,,"VERSION") - ";"
 $   IF F$INTEGER(VERSION) .GT. 10 THEN EXIT
 $   SUBMIT/QUEUE=UCT_RECONSTRUCTION_QUEUE/LOG='P3'/NOPRINT -
