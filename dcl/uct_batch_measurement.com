@@ -20,10 +20,10 @@ $	WRITE SYS$OUTPUT "Carousel Posistion: ''p7'"
 $
 $	COMMANDFILE := SYS$SCRATCH:MEASUREMENT_'p2'.COM
 $	LOGFILE     := SYS$SCRATCH:MEASUREMENT_'P2'.LOG
-$!
+$
 $	SHOW SYMBOL COMMANDFILE
 $	SHOW SYMBOL LOGFILE
-$!
+$
 $	OPEN/WRITE OUTFILE 'COMMANDFILE'
 $	COMMANDFILE = F$SEARCH("''COMMANDFILE'") ! GET VERSION NR
 $!
@@ -32,6 +32,10 @@ $!
 $   SCSI_HW = F$TRNLNM("MICROCT_SCSI")
 $	WRITE OUTFILE "$ WAIT 00:00:30.00"
 $	IF (SCSI_HW .NES. "") THEN WRITE OUTFILE "$ ALLOCATE MICROCT_SCSI"
+$
+$!  vanderbilt script for the "dashboard" application (see script for parameter reference)
+$   WRITE OUTFILE "$ @um:uct_dashboard_logger ""e_ms"" ""''P2'"" ""''P3'"" ""''P4'"""
+$
 $	WRITE OUTFILE "$ RUN UM:UCT_T_BATCH.EXE"
 $	WRITE OUTFILE "''P1'"
 $	WRITE OUTFILE "''P2'"
@@ -46,12 +50,8 @@ $!
 $	IF (SCSI_HW .NES. "") THEN WRITE OUTFILE "$ DEALLOCATE MICROCT_SCSI"
 $!	WRITE OUTFILE "$ DELETE/NOLOG/NOCONFIRM ''COMMANDFILE'"
 $
-$!  vanderbilt script for the "dashboard" application
-$   WRITE OUTFILE "$ open/append UCT_DASHBOARD_SCANS_LOG MICROCT_USER:[DATA.DASHBOARD]SCANS.LOG"
-$   WRITE OUTFILE "$ write UCT_DASHBOARD_SCANS_LOG ""''P2',''P3',"" + f$time()"
-$   WRITE OUTFILE "$ close UCT_DASHBOARD_SCANS_LOG"
-$   
-$	WRITE OUTFILE "$ EXIT"
+$!  vanderbilt script for the "dashboard" application (see script for parameter reference)
+$   WRITE OUTFILE "$ @um:uct_dashboard_logger ""e_mc"" ""''P3'"""
 $!
 $	CLOSE OUTFILE
 $!
