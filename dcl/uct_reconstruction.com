@@ -15,7 +15,7 @@ $   DELETE/NOLOG/NOCONFIRM 'P3'
 $   EXIT
 $ ENDIF
 $!
-$ LOGFILE = F$SEARCH("''P3'")           ! get name & version nr of logfile
+$ LOGFILE = F$SEARCH("''P3'")
 $ @um:uct_dashboard_logger "e_rs" "''P1'" "''P2'"
 $ UCT_RECONSTRUCT :== $UCT_RECONSTRUCTION
 $ UCT_RECONSTRUCT 'P1' 'P2'
