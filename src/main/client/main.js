@@ -1,25 +1,34 @@
-lymph.define("main", function (require) {
+var client = require("lymph-client")
 
-    var ajax = require("lymph-client/ajax")
-    var util = require("lymph-client/utils")
-    var data = require("data")
-    var disks = require("disks")
-    var scheduling = require("scheduling")
-    var measurements = require("measurements")
+var ajax = client.ajax
+var util = client.utils
+
+var data = require("./data")
+var disks = require("./disks")
+var scheduling = require("./scheduling")
+var measurements = require("./measurements")
+
+exports.run = function () {
 
     var mainEl = $("#main")
-
     var facesLogin = facesLoginCacher(data.facesKey())
 
-    var router = new util.Router({}, {
-        "/": function () {
+    console.log("running")
+
+    window.addEventListener("hashchange", handler, false)
+
+    function handler () {
+
+        var hash = window.location.hash.slice(1)
+
+        if (hash === "/") {
             $("header.title nav a").removeClass("active")
             $("#navMeasurements").addClass("active")
             mainEl.html("")
             mainEl.append(measurements.buildView([]))
-        },
+        }
 
-        "/scheduling": function () {
+        else if (hash === "/scheduling") {
             $("header.title nav a").removeClass("active")
             $("#navScheduling").addClass("active")
             mainEl.html("")
@@ -29,9 +38,10 @@ lymph.define("main", function (require) {
                     scheduling.buildView(mainEl, new Date(), data)
                 })
             })
-        },
+        }
 
-        "/admin": function () {
+        else if (hash === "/admin") {
+
             $("header.title nav a").removeClass("active")
             $("#navAdmin").addClass("active")
             mainEl.html("")
@@ -39,15 +49,14 @@ lymph.define("main", function (require) {
                 mainEl.append(disks.buildView(disks.preProcess(data)))
             })
         }
-    })
-
-    if(!window.location.hash){
-        window.location.hash = "/"
     }
 
-    router.start(function(){
-        console.log("finished starting app")
-    })
+    if(window.location.hash === ""){
+        window.location.hash = "/"
+    }
+    else {
+        handler()
+    }
 
     function facesLoginCacher (keyStorage) {
         return function (fn) {
@@ -71,10 +80,10 @@ lymph.define("main", function (require) {
         }
 
         function needsRefresh (key) {
-            if (key.value == null) {
+            if (key.value === null) {
                 return true
             } 
-            else if (key.dateCached == null) {
+            else if (key.dateCached === null) {
                 return true
             }
             else {
@@ -82,5 +91,5 @@ lymph.define("main", function (require) {
             }
         }
     }
-})
+}
 

@@ -1,7 +1,7 @@
 {
-    "name": "uct-interactive",
+    "name": "uct-dashboard",
     "description": "",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "homepage": "",
     "author": {
         "name": "Erick Fleming",
@@ -12,17 +12,18 @@
         "node": ">= 0.8.0"
     },
     "dependencies": {
-        "express":"",
-        "request":""
+        "send": "",
+        "router": "",
+        "request": "",
+        "browserify": "",
+        "lymph-utils": "",
+        "lymph-client": "",
+        "lymph-server": ""
     },
     "devDependencies": {
-        "ftp": ""
-    },
-    "build": {
-        "type": "app",
-        "clientDependencies": [
-            "lymph-core", "lymph-client"
-        ]
+        "ftp": "",
+        "tape": "",
+        "lymph-test": ""
     }
 }
 

@@ -1,117 +1,102 @@
-lymph.define("disks", function (require) {
-    
-    var h = require("lymph-client/html")
+var h = require("lymph-client").html
 
-    var objects = {
-        each: function (obj, fn) {
-            for (var i in obj) {
-                fn(obj[i])
-            }
-        }
+exports.buildView = function (data) {
+    return h.SECTION(
+        h.HEADER(h.I({ class: "icon-hdd" }), h.SPAN("Disks Usage")),
+        h.TABLE({ class:"widget" },
+            h.THEAD(
+                h.TH("Name"), h.TH("Used"), h.TH("Free"), h.TH("Total")
+            ),
+            h.TBODY(data.map(exports.buildItemView))
+        )
+    )
+}
+
+exports.buildItemView = function (data) {
+    var maxBytes = data.max / 2
+    var freeBytes = data.free / 2
+    var percent = percentageUsed(freeBytes, maxBytes)
+    return h.TR(
+        h.TD(data.name),
+        h.TD(buildProgressView(percent)),
+        h.TD({ class:"number"}, bytesToSize(freeBytes)),
+        h.TD({ class:"number"}, bytesToSize(maxBytes))
+    )
+}
+function buildProgressView (percentage) {
+    return h.METER({ low: "80", high: "95", max: "100", value: percentage, title: percentage + "% Used" })
+}
+
+function percentageUsed (free, max) {
+    var used = max - free
+    return ((used / max ) * 100).toFixed(2)
+}
+
+function bytesToSize (bytes) {
+    var sizes = ['KB', 'MB', 'GB', 'TB']
+    if (bytes === 0) return 'n/a'
+    var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)), 0)
+    if (i === 0) return bytes + ' ' + sizes[i] 
+    return (bytes / Math.pow(1024, i)).toFixed(2) + ' ' + sizes[i]
+}
+
+function volume2name (vol) {
+    if (vol === "I64SYS") {
+        return "DISK0"
     }
+    else if (vol === "IUSER_01") {
+        return "DISK1"
+    }
+    else if (/IDATA_02[A-T]/.test(vol)) {
+        return "DISK3"
+    }
+    else if (/IDATA_03[A-E]/.test(vol)) {
+        return "DISK4"
+    }
+    else if (/IDATA_04[A-L]/.test(vol)) {
+        return "DISK5"
+    }
+    else if (/IDATA_01[A-c]/.test(vol)) {
+        return "DISK2"
+    }
+    else {
+        return null
+    }
+}
 
+function hasVolumes (device) {
+    return device.volCount > 0
+}
+
+function transform (device) {
     return {
-        buildView: buildView, buildItemView: buildItemView, preProcess: preProcess
+        name: volume2name(device.volName),
+        description: "",
+        free: device.free,
+        max: device.max
     }
+}
 
-    function buildView (data) {
-        return h.SECTION(
-            h.HEADER(h.I({ class: "icon-hdd" }), h.SPAN("Disks Usage")),
-            h.TABLE({ class:"widget" },
-                h.THEAD(
-                    h.TH("Name"), h.TH("Used"), h.TH("Free"), h.TH("Total")
-                ),
-                h.TBODY(data.map(buildItemView))
-            )
-        )
-    }
+exports.preProcess = function (rawData) {
+    var grouped = {}
+    var groupedArray = []
 
-    function buildItemView (data) {
-        var maxBytes = data.max / 2
-        var freeBytes = data.free / 2
-        var percent = percentageUsed(freeBytes, maxBytes)
-        return h.TR(
-            h.TD(data.name),
-            h.TD(buildProgressView(percent)),
-            h.TD({ class:"number"}, bytesToSize(freeBytes)),
-            h.TD({ class:"number"}, bytesToSize(maxBytes))
-        )
-    }
-    function buildProgressView (percentage) {
-        return h.METER({ low: "80", high: "95", max: "100", value: percentage, title: percentage + "% Used" })
-    }
-
-    function percentageUsed (free, max) {
-        var used = max - free
-        return ((used / max ) * 100).toFixed(2)
-    }
-
-    function bytesToSize (bytes) {
-        var sizes = ['KB', 'MB', 'GB', 'TB']
-        if (bytes == 0) return 'n/a'
-        var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)))
-        if (i == 0) return bytes + ' ' + sizes[i] 
-        return (bytes / Math.pow(1024, i)).toFixed(2) + ' ' + sizes[i]
-    }
-
-    function volume2name (vol) {
-        if (vol === "I64SYS") {
-            return "DISK0"
-        }
-        else if (vol === "IUSER_01") {
-            return "DISK1"
-        }
-        else if (/IDATA_02[A-T]/.test(vol)) {
-            return "DISK3"
-        }
-        else if (/IDATA_03[A-E]/.test(vol)) {
-            return "DISK4"
-        }
-        else if (/IDATA_04[A-L]/.test(vol)) {
-            return "DISK5"
-        }
-        else if (/IDATA_01[A-c]/.test(vol)) {
-            return "DISK2"
+    rawData.filter(hasVolumes).map(transform).forEach(function (i) {
+        if (!grouped[i.name]) {
+            grouped[i.name] = i 
         }
         else {
-            return null
+            grouped[i.name].free = grouped[i.name].free + i.free
+            grouped[i.name].max = grouped[i.name].max + i.max
         }
+    })
+
+    for (var i in grouped) {
+        groupedArray.push(grouped[i])
     }
 
-    function hasVolumes (device) {
-        return device.volCount > 0
-    }
-
-    function transform (device) {
-        return {
-            name: volume2name(device.volName),
-            description: "",
-            free: device.free,
-            max: device.max
-        }
-    }
-
-    function preProcess (rawData) {
-        var grouped = {}
-        var groupedArray = []
-
-        rawData.filter(hasVolumes).map(transform).forEach(function (i) {
-            if (!grouped[i.name]) {
-                grouped[i.name] = i 
-            }
-            else {
-                grouped[i.name].free = grouped[i.name].free + i.free
-                grouped[i.name].max = grouped[i.name].max + i.max
-            }
-        })
-
-        for (var i in grouped) {
-            groupedArray.push(grouped[i])
-        }
-
-        return groupedArray.sort(function (a, b) {
-            return (a.name < b.name) ? -1 : (a.name > b.name) ? 1 : 0
-        })
-    }
-})
+    return groupedArray.sort(function (a, b) {
+        return (a.name < b.name) ? -1 : (a.name > b.name) ? 1 : 0
+    })
+}
 
