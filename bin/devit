@@ -1,105 +1,95 @@
 #!/usr/bin/env node
 
-var express = require("express")
-var http = require("http")
-var path = require("path")
-var fs = require("fs")
+var buildServer = require("lymph-build").server
+
+var router = require("router")
+var http   = require("http")
+var path   = require("path")
+var send   = require("send")
+var fs     = require("fs")
+var bfy    = require("browserify")
 var request = require("request")
 
-var app = express()
+var server = require("lymph-server")
+var h = server.html.helpers
 
-app.configure(function () {
-    app.use(express.favicon())
-    app.use(express.logger("dev"))
-    app.use(express.bodyParser())
-    app.use(express.cookieParser())
-    app.use(express.methodOverride())
-    app.use(app.router)
-    app.use("/src", express.static(path.join(__dirname, "..", "src")))
-    app.use(express.static(path.join(__dirname, "..", "static")))
-});
+buildServer.run(function appHandler (req, res) {
 
-app.configure("development", function () {
-    app.use(express.errorHandler())
-})
+    var path = req.url
 
-app.get("/lib/lymph-core.js", function (req, res) {
-    res.sendfile("node_modules/lymph-core/lib/index-browser.js")
-})
-
-app.get("/lib/lymph-client.js", function (req, res) {
-    res.sendfile("node_modules/lymph-client/lib/index-browser.js")
-})
-
-app.get("/lib/index.js", function (req, res) {
-    res.sendfile("lib/index-client.js")
-})
-
-app.get("/lib/index-client.js.map", function (req, res) {
-    res.sendfile("lib/index-client.js.map")
-})
-
-app.get("/cgi-bin/disks.com", function (req, res) {
-    res.sendfile("dat/disks.json")
-})
-
-app.get("/cgi-bin/faces_data.com", function (req, res) {
-    res.set("Content-Type", "text/plain")
-    res.sendfile("dat/faces_data.txt")
-})
-
-app.get("/cgi-bin/faces_login.com", function (req, res) {
-
-    var data = {
-        account:"VUIIS_IVIS",
-        savegrp:"on",
-        user:"manager",
-        saveusr:"on",
-        savepwd:"on",
-        passwd:"japon",
-        end:"0"
+    if (req.url === "/") {
+        path = "index.html"
     }
 
-    request.post("http://faces.ccrc.uga.edu/ccrcfaces/login.php", function (e, r, body) {
-        res.send(body.match(/NAME='pk' VALUE='([0-9a-z]*)'/)[1])
-    }).form(data)
+    send(req, path).root("static").pipe(res)
 })
 
-app.get("/cgi-bin/measurements.com", function (req, res) {
-    res.sendfile("misc/measurements.json")
-})
 
-app.get("/cgi-bin/authorize.com", function (req, res) {
-    if (req.cookies.uct_uid && req.cookies.uct_uid === "123") {
-        res.send(200)
-    }
-    else {
-        res.send(403)
-    }
-})
+//route.get("/stdlib/index.js", function (req, res) {
+    //bfy(["./lib/index-browser.js"]).bundle().pipe(res)
+//})
 
-app.post("/cgi-bin/authenticate.com", function (req, res) {
-    if (req.param("username") === "erick" && req.param("password") === "pass") {
-        res.cookie("uct_uid", "123", { path: "/" })
-        res.send("erick,admin")
-    }
-    else if (req.param("username") === "nicole" && req.param("password") === "pass") {
-        res.cookie("uct_uid", "321", { path: "/" })
-        res.send("nicole,user")
-    }
-    else {
-        res.send(403)
-    }
-})
+//route.get("/cgi-bin/disks.com", function (req, res) {
+    //send(req, "disks.json").root("dat").pipe(res)
+//})
 
-app.post("/items", function (req, res) {
-    fs.writeFile("data.json", JSON.stringify(req.body), function (err) {
-        res.send(200)
-    })
-});
+//route.get("/cgi-bin/faces_data.com", function (req, res) {
+    //res.set("Content-Type", "text/plain")
+    //send(req, "faces_data.txt").root("dat").pipe(res)
+//})
 
-http.createServer(app).listen(8080, function () {
-    console.log("Server is running: http://0.0.0.0:8080");
-})
+//route.get("/cgi-bin/faces_login.com", function (req, res) {
+
+    //var data = {
+        //account:"VUIIS_IVIS",
+        //savegrp:"on",
+        //user:"manager",
+        //saveusr:"on",
+        //savepwd:"on",
+        //passwd:"japon",
+        //end:"0"
+    //}
+
+    //request.post("http://faces.ccrc.uga.edu/ccrcfaces/login.php", function (e, r, body) {
+        //res.send(body.match(/NAME='pk' VALUE='([0-9a-z]*)'/)[1])
+    //}).form(data)
+//})
+
+//route.get("/cgi-bin/measurements.com", function (req, res) {
+    //res.sendfile("misc/measurements.json")
+//})
+
+//route.get("/cgi-bin/authorize.com", function (req, res) {
+    //if (req.cookies.uct_uid && req.cookies.uct_uid === "123") {
+        //res.send(200)
+    //}
+    //else {
+        //res.send(403)
+    //}
+//})
+
+//route.post("/cgi-bin/authenticate.com", function (req, res) {
+    //if (req.param("username") === "erick" && req.param("password") === "pass") {
+        //res.cookie("uct_uid", "123", { path: "/" })
+        //res.send("erick,admin")
+    //}
+    //else if (req.param("username") === "nicole" && req.param("password") === "pass") {
+        //res.cookie("uct_uid", "321", { path: "/" })
+        //res.send("nicole,user")
+    //}
+    //else {
+        //res.send(403)
+    //}
+//})
+
+//route.post("/items", function (req, res) {
+    //fs.writeFile("data.json", JSON.stringify(req.body), function (err) {
+        //res.send(200)
+    //})
+//});
+
+//http.createServer(route).listen(8080, function () {
+    //console.log("Server is running: http://0.0.0.0:8080");
+//})
 
 // vim: ft=javascript
