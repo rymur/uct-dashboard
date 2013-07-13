@@ -2,12 +2,11 @@
 
 var buildServer = require("lymph-build").server
 
-var router = require("router")
-var http   = require("http")
-var path   = require("path")
-var send   = require("send")
-var fs     = require("fs")
-var bfy    = require("browserify")
+var router  = require("router")
+var http    = require("http")
+var path    = require("path")
+var send    = require("send")
+var fs      = require("fs")
 var request = require("request")
 
 var server = require("lymph-server")

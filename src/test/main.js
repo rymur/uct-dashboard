@@ -1,6 +1,12 @@
-var test = require("tape")
+var lymphTest = require("lymph-test")
 
-test("main", function (assert) {
-    assert.equal(true, true)
+var suite = lymphTest.suite
+var assert = lymphTest.assert
+
+module.exports = suite("main", function (test) {
+    
+    test("sanity", function () {
+        assert.equals(true, true)
+    })
 })
 
