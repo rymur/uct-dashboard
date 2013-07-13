@@ -15,49 +15,39 @@ var h = server.html.helpers
 
 buildServer.run(function appHandler (req, res) {
 
-    var path = req.url
-
     if (req.url === "/") {
-        path = "index.html"
+        send(req, "index.html").root("static").pipe(res)
+    }
+    else if (req.url === "/cgi-bin/disks.com") {
+        send(req, "disks.json").root("dat").pipe(res)
+    }
+    else if (req.url.indexOf("/cgi-bin/faces_data.com") === 0) {
+        send(req, "faces_data.txt").root("dat").pipe(res)
+    }
+    else if (req.url === "/cgi-bin/measurements.com") {
+        send(req, "measurements.json").root("misc").pipe(res)
+    }
+    else if (req.url === "/cgi-bin/faces_login.com") {
+
+        var data = {
+            account:"VUIIS_IVIS",
+            savegrp:"on",
+            user:"manager",
+            saveusr:"on",
+            savepwd:"on",
+            passwd:"japon",
+            end:"0"
+        }
+
+        request.post("http://faces.ccrc.uga.edu/ccrcfaces/login.php", function (e, r, body) {
+            res.end(body.match(/NAME='pk' VALUE='([0-9a-z]*)'/)[1])
+        }).form(data)
+    }
+    else {
+        send(req, req.url).root("static").pipe(res)
     }
 
-    send(req, path).root("static").pipe(res)
 })
-
-
-//route.get("/stdlib/index.js", function (req, res) {
-    //bfy(["./lib/index-browser.js"]).bundle().pipe(res)
-//})
-
-//route.get("/cgi-bin/disks.com", function (req, res) {
-    //send(req, "disks.json").root("dat").pipe(res)
-//})
-
-//route.get("/cgi-bin/faces_data.com", function (req, res) {
-    //res.set("Content-Type", "text/plain")
-    //send(req, "faces_data.txt").root("dat").pipe(res)
-//})
-
-//route.get("/cgi-bin/faces_login.com", function (req, res) {
-
-    //var data = {
-        //account:"VUIIS_IVIS",
-        //savegrp:"on",
-        //user:"manager",
-        //saveusr:"on",
-        //savepwd:"on",
-        //passwd:"japon",
-        //end:"0"
-    //}
-
-    //request.post("http://faces.ccrc.uga.edu/ccrcfaces/login.php", function (e, r, body) {
-        //res.send(body.match(/NAME='pk' VALUE='([0-9a-z]*)'/)[1])
-    //}).form(data)
-//})
-
-//route.get("/cgi-bin/measurements.com", function (req, res) {
-    //res.sendfile("misc/measurements.json")
-//})
 
 //route.get("/cgi-bin/authorize.com", function (req, res) {
     //if (req.cookies.uct_uid && req.cookies.uct_uid === "123") {
@@ -87,9 +77,5 @@ buildServer.run(function appHandler (req, res) {
         //res.send(200)
     //})
 //});
-
-//http.createServer(route).listen(8080, function () {
-    //console.log("Server is running: http://0.0.0.0:8080");
-//})
 
 // vim: ft=javascript

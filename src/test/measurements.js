@@ -1,7 +1,7 @@
-describe("measurements", function () {
+var test = require("tape")
+var measurements = require("../main/client/measurements")
 
-    var assert = chai.assert
-    var measurements = lymph.require("measurements")
+test("measurements", function (assert) {
 
     var data = [
         {
@@ -27,7 +27,6 @@ describe("measurements", function () {
             "energyICode":"E3_Imax",
             "integrationTime":"250"
         },
-        
         {
             "listDate":"31-MAY-2013 22:33",
             "sampleNumber":"12609",
@@ -52,27 +51,33 @@ describe("measurements", function () {
             "integrationTime":"300"
         }
     ]
+    
+    //var view = measurements.itemView(data[0])
+    //var html = view.outerHTML
 
-    describe("a single measurment item", function () {
+    assert.ok(false)
 
-        var view = measurements.buildItemView(data[0])
-        var html = view.outerHTML
+    assert.end()
+    //assert.ok(contains("foo", "whatfoobar"))
 
-        it("has a sample name", function () {
-            assert.include(html, "QC1 (weekly, density)")
-        })
+    //it("has a sample name", function () {
+        //assert.include(html, "QC1 (weekly, density)")
+    //})
 
-        it("has the measurement date", function () {
-            assert.include(html, "Wed May 22 2013")
-        })
+    //it("has the measurement date", function () {
+        //assert.include(html, "Wed May 22 2013")
+    //})
 
-        it("has the sample number", function () {
-            assert.include(html, "1")
-        })
+    //it("has the sample number", function () {
+        //assert.include(html, "1")
+    //})
 
-        it("has the measurement number", function () {
-            assert.include(html, "23234")
-        })
-    })
+    //it("has the measurement number", function () {
+        //assert.include(html, "23234")
+    //})
 })
+
+function contains (a, b) {
+    return a.indexOf(b) === 0 
+}
 

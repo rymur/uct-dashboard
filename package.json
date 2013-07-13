@@ -9,20 +9,19 @@
     },
     "repository": {},
     "engines": {
-        "node": ">= 0.8.0"
+        "node": ">= 0.10.0"
     },
     "dependencies": {
         "send": "",
         "router": "",
         "request": "",
-        "browserify": "",
         "lymph-utils": "",
         "lymph-client": "",
-        "lymph-server": ""
+        "lymph-server": "",
+        "lymph-styles": ""
     },
     "devDependencies": {
         "ftp": "",
-        "tape": "",
         "lymph-test": ""
     }
 }

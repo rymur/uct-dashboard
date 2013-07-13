@@ -25,7 +25,7 @@ exports.run = function () {
             $("header.title nav a").removeClass("active")
             $("#navMeasurements").addClass("active")
             mainEl.html("")
-            mainEl.append(measurements.buildView([]))
+            mainEl.append(measurements.view([]))
         }
 
         else if (hash === "/scheduling") {
