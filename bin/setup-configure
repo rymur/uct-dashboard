@@ -1,0 +1,40 @@
+#!/bin/sh
+
+# setup iptables for routing port 80 to 8080
+################################################################################
+sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 8080
+
+# save the rules to a temporary file
+################################################################################
+mkdir /tmp/setup
+
+# creating an iptables rules file
+################################################################################
+sudo iptables-save > /tmp/setup/rules
+sudo mv /tmp/setup/rules /etc/iptables.rules
+
+# creating an iptables restore script
+################################################################################
+cat << EOF > /tmp/setup/restore
+#!/bin/sh
+
+iptables-restore < /etc/iptables.rules
+
+exit 0
+EOF
+
+# install iptables restore script
+################################################################################
+sudo mv /tmp/setup/restore /etc/network/if-pre-up.d/iptables-restore
+sudo chmod +x /etc/network/if-pre-up.d/iptables-restore
+
+# this section is for setting up applications
+################################################################################
+APP_NAME=uct-dashboard
+
+sudo mkdir "/var/local/$APP_NAME"
+sudo chown ubuntu "/var/local/$APP_NAME"
+
+sudo mkdir "/var/log/$APP_NAME"
+sudo chown ubuntu "/var/log/$APP_NAME"
+
