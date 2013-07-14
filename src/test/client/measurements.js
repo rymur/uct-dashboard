@@ -1,7 +1,7 @@
 var lymphTest = require("lymph-test")
 var assert = lymphTest.assert
 
-var measurements = require("../main/client/measurements")
+var measurements = require("../../main/client/measurements")
 
 module.exports = lymphTest.suite("disks", function (test) {
 
