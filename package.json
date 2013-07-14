@@ -21,8 +21,9 @@
         "lymph-styles": ""
     },
     "devDependencies": {
-        "ftp": "",
-        "lymph-test": ""
+        "grunt": "",
+        "lymph-test": "",
+        "ftp": ""
     }
 }
 
