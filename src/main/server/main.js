@@ -20,13 +20,13 @@ module.exports = function (send, request) {
         else if (req.url === "/cgi-bin/faces_login.com") {
 
             var data = {
-                account:"VUIIS_IVIS",
-                savegrp:"on",
-                user:"manager",
-                saveusr:"on",
-                savepwd:"on",
-                passwd:"japon",
-                end:"0"
+                 account:"VUIIS_IVIS"
+                ,savegrp:"on"
+                ,user:"manager"
+                ,saveusr:"on"
+                ,savepwd:"on"
+                ,passwd:"japon"
+                ,end:"0"
             }
 
             request.post("http://faces.ccrc.uga.edu/ccrcfaces/login.php", function (e, r, body) {
