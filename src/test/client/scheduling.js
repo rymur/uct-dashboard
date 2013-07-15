@@ -3,7 +3,7 @@ var assert = lymphTest.assert
 
 var scheduling = require("../../main/client/scheduling")
 
-module.exports = lymphTest.suite("disks", function (test) {
+module.exports = lymphTest.suite("client scheduling", function (test) {
 
     var rawData = [
          "40 2013-05-24 16:00:00 2013-05-24 17:00:00 fe_nf1 Jean nf1 col2 bone | N/A"

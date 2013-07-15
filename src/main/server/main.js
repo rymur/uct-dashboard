@@ -1,5 +1,6 @@
 var server = require("lymph-server")
 var h = server.html.helpers
+var scheduling = require("./scheduling")
 
 module.exports = function (send, request) {
     
@@ -17,21 +18,23 @@ module.exports = function (send, request) {
         else if (req.url === "/cgi-bin/measurements.com") {
             send(req, "measurements.json").root("misc").pipe(res)
         }
-        else if (req.url === "/cgi-bin/faces_login.com") {
-
-            var data = {
-                 account:"VUIIS_IVIS"
-                ,savegrp:"on"
-                ,user:"manager"
-                ,saveusr:"on"
-                ,savepwd:"on"
-                ,passwd:"japon"
-                ,end:"0"
-            }
-
-            request.post("http://faces.ccrc.uga.edu/ccrcfaces/login.php", function (e, r, body) {
-                res.end(body.match(/NAME='pk' VALUE='([0-9a-z]*)'/)[1])
-            }).form(data)
+        else if (req.url === "/facesAuth") {
+            scheduling.requestFaceAuth(request, function (err, authData) {
+                res.writeHead(200, {
+                    "Content-Type": "application/json"
+                })
+                res.end(JSON.stringify(scheduling.parseFacesAuth(authData)))
+            })
+        }
+        else if (req.url.indexOf("/facesData") == 0) {
+            var pk = req.url.match(new RegExp("pk=([0-9a-z]*)"))[1]
+            scheduling.requestFacesData(request, pk, function (err, r) {
+                console.log(r.body)
+                res.writeHead(200, {
+                    "Content-Type": "text/plain"
+                })
+                res.end(r.body)
+            })
         }
         else {
             send(req, req.url).root("static").pipe(res)

@@ -10,8 +10,22 @@ var measurements = require("./measurements")
 
 exports.run = function () {
 
+    var xhr = new XMLHttpRequest()
     var mainEl = $("#main")
-    var facesLogin = facesLoginCacher(data.facesKey())
+
+    var getKey = function () {
+        return data.getKey(sessionStorage)
+    }
+
+    var setKey = function (key) {
+        data.setKey(sessionStorage, key)
+    }
+
+    var ajaxGet = function (url, cb) {
+        ajax.get(xhr, url, cb)
+    }
+
+    var getFaceAuth = data.facesAuth(ajaxGet, getKey, setKey)
 
     console.log("running")
 
@@ -32,8 +46,8 @@ exports.run = function () {
             $("header.title nav a").removeClass("active")
             $("#navScheduling").addClass("active")
             mainEl.html("")
-            facesLogin(function (pk) {
-                ajax.get("/cgi-bin/faces_data.com?pk=" + pk, function (rawData) {
+            getFaceAuth(function (pk) {
+                ajaxGet("/facesData?pk=" + pk.key, function (rawData) {
                     var data = scheduling.separate(scheduling.process(rawData))
                     scheduling.buildView(mainEl, new Date(), data)
                 })
@@ -45,7 +59,7 @@ exports.run = function () {
             $("header.title nav a").removeClass("active")
             $("#navAdmin").addClass("active")
             mainEl.html("")
-            ajax.get("/cgi-bin/disks.com", function (data) {
+            ajax.get(xhr, "/cgi-bin/disks.com", function (data) {
                 mainEl.append(disks.buildView(disks.preProcess(data)))
             })
         }
@@ -56,40 +70,6 @@ exports.run = function () {
     }
     else {
         handler()
-    }
-
-    function facesLoginCacher (keyStorage) {
-        return function (fn) {
-
-            var key = keyStorage.get()
-
-            if (needsRefresh(key)) {
-                console.log("from server ===>")
-                ajax.get("/cgi-bin/faces_login.com", function (pk) {
-                    keyStorage.set({
-                        value: pk,
-                        dateCached: Date.now()
-                    })
-                    fn(pk)
-                })
-            }
-            else {
-                console.log("from cache --->")
-                fn(key.value)
-            }
-        }
-
-        function needsRefresh (key) {
-            if (key.value === null) {
-                return true
-            } 
-            else if (key.dateCached === null) {
-                return true
-            }
-            else {
-                return ((Date.now() - key.dateCached) > (1000 * 60 * 5))
-            }
-        }
     }
 }
 
