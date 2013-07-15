@@ -1,9 +1,12 @@
-var client = require("lymph-client")
+var lymphClient = require("lymph-client")
+var lymphUtils = require("lymph-utils")
 
-var ajax = client.ajax
-var util = client.utils
-
+var ajax = lymphClient.ajax
+var f = lymphUtils.utils
+var html = lymphClient.html
+var arrays = lymphUtils.arrays
 var data = require("./data")
+
 var disks = require("./disks")
 var scheduling = require("./scheduling")
 var measurements = require("./measurements")
@@ -13,38 +16,37 @@ exports.run = function () {
     var xhr = new XMLHttpRequest()
     var mainEl = $("#main")
 
-    var getKey = function () {
-        return data.getKey(sessionStorage)
-    }
-
-    var setKey = function (key) {
-        data.setKey(sessionStorage, key)
-    }
-
-    var ajaxGet = function (url, cb) {
-        ajax.get(xhr, url, cb)
-    }
-
+    var getKey = f.partial(data.getKey, sessionStorage)
+    var setKey = f.partial(data.setKey, sessionStorage)
+    var ajaxGet = f.partial(ajax.get, xhr)
     var getFaceAuth = data.facesAuth(ajaxGet, getKey, setKey)
 
-    console.log("running")
+    var deactivateTabs = f.partial(
+        f.partial(html.removeClassFrom, "header.title nav a"), "active")
 
     window.addEventListener("hashchange", handler, false)
+
+    if(window.location.hash === ""){
+        window.location.hash = "/"
+    }
+    else {
+        handler()
+    }
 
     function handler () {
 
         var hash = window.location.hash.slice(1)
 
         if (hash === "/") {
-            $("header.title nav a").removeClass("active")
-            $("#navMeasurements").addClass("active")
+            deactivateTabs()
+            html.addClassTo("#navMeasurements", "active")
             mainEl.html("")
             mainEl.append(measurements.view([]))
         }
 
         else if (hash === "/scheduling") {
-            $("header.title nav a").removeClass("active")
-            $("#navScheduling").addClass("active")
+            deactivateTabs()
+            html.addClassTo("#navScheduling", "active")
             mainEl.html("")
             getFaceAuth(function (pk) {
                 ajaxGet("/facesData?pk=" + pk.key, function (rawData) {
@@ -55,21 +57,21 @@ exports.run = function () {
         }
 
         else if (hash === "/admin") {
-
-            $("header.title nav a").removeClass("active")
-            $("#navAdmin").addClass("active")
+            deactivateTabs()
+            html.addClassTo("#navAdmin", "active")
             mainEl.html("")
             ajax.get(xhr, "/cgi-bin/disks.com", function (data) {
                 mainEl.append(disks.buildView(disks.preProcess(data)))
             })
         }
     }
+}
 
-    if(window.location.hash === ""){
-        window.location.hash = "/"
-    }
-    else {
-        handler()
+function flip (f) {
+    return function (a) {
+        return function (b) {
+            return f(b, a)
+        }
     }
 }
 

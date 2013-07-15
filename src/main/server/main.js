@@ -26,7 +26,7 @@ module.exports = function (send, request) {
                 res.end(JSON.stringify(scheduling.parseFacesAuth(authData)))
             })
         }
-        else if (req.url.indexOf("/facesData") == 0) {
+        else if (req.url.indexOf("/facesData") === 0) {
             var pk = req.url.match(new RegExp("pk=([0-9a-z]*)"))[1]
             scheduling.requestFacesData(request, pk, function (err, r) {
                 console.log(r.body)
@@ -42,33 +42,4 @@ module.exports = function (send, request) {
 
     }
 }
-
-//route.get("/cgi-bin/authorize.com", function (req, res) {
-    //if (req.cookies.uct_uid && req.cookies.uct_uid === "123") {
-        //res.send(200)
-    //}
-    //else {
-        //res.send(403)
-    //}
-//})
-
-//route.post("/cgi-bin/authenticate.com", function (req, res) {
-    //if (req.param("username") === "erick" && req.param("password") === "pass") {
-        //res.cookie("uct_uid", "123", { path: "/" })
-        //res.send("erick,admin")
-    //}
-    //else if (req.param("username") === "nicole" && req.param("password") === "pass") {
-        //res.cookie("uct_uid", "321", { path: "/" })
-        //res.send("nicole,user")
-    //}
-    //else {
-        //res.send(403)
-    //}
-//})
-
-//route.post("/items", function (req, res) {
-    //fs.writeFile("data.json", JSON.stringify(req.body), function (err) {
-        //res.send(200)
-    //})
-//});
 
