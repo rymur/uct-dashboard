@@ -49,9 +49,9 @@ exports.run = function () {
             html.addClassTo("#navScheduling", "active")
             mainEl.html("")
             getFaceAuth(function (pk) {
-                ajaxGet("/facesData?pk=" + pk.key, function (rawData) {
-                    var data = scheduling.separate(scheduling.process(rawData))
-                    scheduling.buildView(mainEl, new Date(), data)
+                ajaxGet("/facesData?pk=" + pk.key, function (data) {
+                    scheduling.buildView(mainEl, new Date(),
+                        scheduling.separate(data))
                 })
             })
         }

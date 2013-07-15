@@ -52,4 +52,9 @@ it by reloading with recomputed parameters (eg bucket size):-
         $ EDIT/FDL/NOINTERACTIVE/ANALYSIS=INDEXED.FDL INDEXED.FDL
         $ CONVERT/NOSORT/FDL=INDEXED.FDL  INDEXED.DAT INDEXED.DAT
 
+# Faces API
+
+    rindex: 
+    9  = uCT 40
+    16 = uCT 50
 

@@ -27,13 +27,13 @@ exports.requestFaceAuth = function (request, done) {
     }).form(creds)
 }
 
-exports.requestFacesData = function (request, pk, done) {
+exports.requestFacesData = function (request, pk, scannerId, done) {
     
     var qsHash = {
          user: "manager"
         ,rndm: 563405192
         ,account: "VUIIS_IVIS"
-        ,rindex: 16
+        ,rindex: scannerId
         ,pk: pk
         ,mode:0
     }
@@ -43,5 +43,33 @@ exports.requestFacesData = function (request, pk, done) {
     request.get({ url: url, qs: qsHash }, function (err, data) {
         done(null, data)
     })
+}
+
+exports.parseFacesData = function (rawData, scannerId) {
+
+    return rawData.split("\n").slice(9).map(dataFromLine).map(extractFields)
+
+    function extractComment (data) {
+        return data.slice(data.indexOf(" ", 43)).trim()
+    }
+
+    function extractFields (data) {
+        var fields = data.split(" ")
+        var comment = extractComment(data)
+        var start = new Date(fields[0] + " " + fields[1])
+        var end = new Date(fields[2] + " " + fields[3]) 
+        return {
+            scanner: scannerId ? scannerId : "40",
+            start: start,
+            end: end,
+            account:   fields[4],
+            comment: comment,
+            part: "full"
+        }
+    }
+
+    function dataFromLine (line) {
+        return line.split("|")[0]
+    }
 }
 

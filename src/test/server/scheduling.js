@@ -39,9 +39,57 @@ module.exports = lymphTest.suite("server scheduling", function (test) {
             }
         }
 
-        scheduling.requestFacesData(request, "pknumber", function (err, data) {
+        scheduling.requestFacesData(request, "pknumber", 16, function (err, data) {
             assert.equals(data, "dummy")
         })
+    })
+
+    test("parses faces scheduling data", function () {
+
+        var rawData = [
+             "Schedule data has been updated."
+            ,"0 0 1440 -1 -1 -1 -1"
+            ,"1 0 1440 -1 -1 -1 -1"
+            ,"2 0 1440 -1 -1 -1 -1"
+            ,"3 0 1440 -1 -1 -1 -1"
+            ,"4 0 1440 -1 -1 -1 -1"
+            ,"5 0 1440 -1 -1 -1 -1"
+            ,"6 0 1440 -1 -1 -1 -1"
+            ,"62"
+            ,"2013-05-24 16:00:00 2013-05-24 17:00:00 fe_nf1 Jean nf1 col2 bone | N/A"
+            ,"2013-05-15 17:00:00 2013-05-16 06:00:00 fe_nasa VBX | N/A"
+            ,"2013-06-07 16:00:00 2013-06-08 21:00:00 orear_plasmin  | N/A"
+        ].join("\n")
+
+        var processedData = [//{{
+            { 
+                 scanner: "40"
+                ,start: new Date("2013-05-24T16:00:00-0500")
+                ,end: new Date("2013-05-24T17:00:00-0500")
+                ,account: "fe_nf1"
+                ,comment: "Jean nf1 col2 bone"
+                ,part: "full"
+            }
+            ,{ 
+                 scanner: "40"
+                ,start: new Date("2013-05-15T17:00:00-0500")
+                ,end: new Date("2013-05-16T06:00:00-0500")
+                ,account: "fe_nasa"
+                ,comment: "VBX"
+                ,part: "full"
+            }
+            ,{ 
+                 scanner: "40"
+                ,start: new Date("2013-06-07T16:00:00-0500")
+                ,end: new Date("2013-06-08T21:00:00-0500")
+                ,account: "orear_plasmin"
+                ,comment: ""
+                ,part: "full"
+            }
+        ] //}}
+
+        var parsed = scheduling.parseFacesData(rawData)
+        assert.equals(parsed, processedData)
     })
 })
 

@@ -21,13 +21,15 @@ exports.buildView = function (mainEl, startDate, data) {
     mainEl.append(view)
 
     data.forEach(function (e) {
-        var day = document.getElementById(dateId(e.start))
+        var startDate = new Date(e.start)
+        var endDate = new Date(e.end)
+        var day = document.getElementById(dateId(startDate))
         if (day !== null) {
             var ediv = h.DIV({ class: "event-" + e.scanner + " " + e.part }, e.account)
-            var startHour = e.start.getHours()
+            var startHour = startDate.getHours()
             var startPOS = ((startHour * 20) + 2) + 20
             ediv.style.top = startPOS + "px"
-            ediv.style.height = ((hourDiff(e.end, e.start) * 20) - 7) + "px"
+            ediv.style.height = ((hourDiff(endDate, startDate) * 20) - 7) + "px"
             day.appendChild(ediv)
         }
     })
@@ -35,8 +37,8 @@ exports.buildView = function (mainEl, startDate, data) {
     return view
 }
 
-function dateId (date) {
-    return date.getFullYear() + "" + date.getMonth() + "" + date.getDate()
+function dateId (dt) {
+    return dt.getFullYear() + "" + dt.getMonth() + "" + dt.getDate()
 }
 
 function hourDiff(date1, date2) {
@@ -128,34 +130,6 @@ function timeSlots () {
         slots.push(i + ":00")
     }
     return slots
-}
-
-exports.process = function (rawData) {
-
-    function extractComment (data) {
-        return data.slice(data.indexOf(" ", 43)).trim()
-    }
-
-    function extractFields (data) {
-        var fields = data.split(" ")
-        var comment = extractComment(data)
-        var start = new Date(fields[1] + " " + fields[2])
-        var end = new Date(fields[3] + " " + fields[4]) 
-        return {
-            scanner: fields[0],
-            start: start,
-            end: end,
-            account:   fields[5],
-            comment: comment,
-            part: "full"
-        }
-    }
-
-    function dataFromLine (line) {
-        return line.split("|")[0]
-    }
-
-    return rawData.split("\n").map(dataFromLine).map(extractFields)
 }
 
 exports.separate = function (data) {

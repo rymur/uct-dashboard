@@ -5,12 +5,6 @@ var scheduling = require("../../main/client/scheduling")
 
 module.exports = lymphTest.suite("client scheduling", function (test) {
 
-    var rawData = [
-         "40 2013-05-24 16:00:00 2013-05-24 17:00:00 fe_nf1 Jean nf1 col2 bone | N/A"
-        ,"40 2013-05-15 17:00:00 2013-05-16 06:00:00 fe_nasa VBX | N/A"
-        ,"40 2013-06-07 16:00:00 2013-06-08 21:00:00 orear_plasmin  | N/A"
-    ].join("\n")
-
     var processedData = [//{{
         { 
              scanner: "40"
@@ -37,11 +31,6 @@ module.exports = lymphTest.suite("client scheduling", function (test) {
             ,part: "full"
         }
     ] //}}
-
-    test("extract the fields", function () {
-        var actual = scheduling.process(rawData)
-        assert.equals(actual, processedData)
-    })
 
     test("breaks multi day events into separate events", function () {
 

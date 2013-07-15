@@ -28,12 +28,11 @@ module.exports = function (send, request) {
         }
         else if (req.url.indexOf("/facesData") === 0) {
             var pk = req.url.match(new RegExp("pk=([0-9a-z]*)"))[1]
-            scheduling.requestFacesData(request, pk, function (err, r) {
-                console.log(r.body)
+            scheduling.requestFacesData(request, pk, 16, function (err, r) {
                 res.writeHead(200, {
-                    "Content-Type": "text/plain"
+                    "Content-Type": "application/json"
                 })
-                res.end(r.body)
+                res.end(JSON.stringify(scheduling.parseFacesData(r.body, "50")))
             })
         }
         else {
