@@ -4,7 +4,9 @@ var d = require("lymph-dates").dates
 
 exports.buildView = function (mainEl, startDate, data) {
 
-    var d = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate())
+    var d = new Date(startDate.getFullYear(), startDate.getMonth(),
+        startDate.getDate())
+
     var day = d.getDay()
     var diff = d.getDate() - day + (day === 0 ? -6 : 1)
     var monday = new Date(d.setDate(diff))
@@ -24,10 +26,15 @@ exports.buildView = function (mainEl, startDate, data) {
         var startDate = new Date(e.start)
         var endDate = new Date(e.end)
         var day = document.getElementById(dateId(startDate))
+
         if (day !== null) {
-            var ediv = h.DIV({ class: "event-" + e.scanner + " " + e.part }, e.account)
+
+            var ediv = h.DIV({ class: "event-" + e.scanner + " " + e.part },
+                e.account)
+
             var startHour = startDate.getHours()
             var startPOS = ((startHour * 20) + 2) + 20
+
             ediv.style.top = startPOS + "px"
             ediv.style.height = ((hourDiff(endDate, startDate) * 20) - 7) + "px"
             day.appendChild(ediv)
@@ -166,16 +173,23 @@ exports.separate = function (data) {
             }
 
             if (i == firstDay) {
-                event.end = new Date(new Date(d1.getFullYear(), d1.getMonth(), i, 24, 0, 0, 0) - 1)
+                event.end = new Date(new Date(d1.getFullYear(),
+                    d1.getMonth(), i, 24, 0, 0, 0) - 1)
+
                 event.part = "begin"
             }
             else if (i == lastDay) {
-                event.start = new Date(d1.getFullYear(), d1.getMonth(), i, 0, 0, 0, 0)
+                event.start = new Date(d1.getFullYear(),
+                    d1.getMonth(), i, 0, 0, 0, 0)
+
                 event.part = "end"
             }
             else {
-                event.start = new Date(d1.getFullYear(), d1.getMonth(), i, 0, 0, 0, 0)
-                event.end = new Date(d1.getFullYear(), d1.getMonth(), i, 24, 0, 0, 0)
+                event.start = new Date(d1.getFullYear(),
+                    d1.getMonth(), i, 0, 0, 0, 0)
+                event.end = new Date(d1.getFullYear(),
+                    d1.getMonth(), i, 24, 0, 0, 0)
+
                 event.part = "middle"
             }
 
