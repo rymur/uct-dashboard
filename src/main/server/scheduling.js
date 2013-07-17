@@ -48,7 +48,9 @@ exports.requestFacesData = function (request, pk, scannerId, done) {
 exports.parseFacesData = function (rawData, scannerId) {
 
     var rawDataItems = rawData.split("\n")
-    
+
+    console.log(rawData)
+
     return rawDataItems.slice(9, rawDataItems.length - 1).map(dataFromLine).map(extractFields)
 
     function extractComment (data) {
