@@ -141,10 +141,10 @@ div.day div.time {
 
 div.event-40 {
     font-size: small;
-    left: 3%;
+    left: 53%;
     position: absolute;
     background-color: rgb(169, 169, 199);
-    width: 95%;
+    width: 44%;
     overflow: hidden;
     text-overflow: ellipsis;
     border: 1px solid blue;
@@ -159,7 +159,7 @@ div.event-50 {
     left: 3%;
     position: absolute;
     background-color: rgba(255, 153, 0, 0.75);
-    width: 95%;
+    width: 44%;
     overflow: hidden;
     text-overflow: ellipsis;
     border: 1px solid rgb(187, 113, 0);
