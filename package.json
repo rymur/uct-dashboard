@@ -1,29 +1,29 @@
 {
-    "name": "uct-dashboard",
-    "description": "",
-    "version": "0.2.0",
-    "homepage": "",
-    "author": {
-        "name": "Erick Fleming",
-        "email": "erick@sudogs.com"
-    },
-    "repository": {},
-    "engines": {
+     "name": "uct-dashboard"
+    ,"description": ""
+    ,"version": "0.2.0"
+    ,"homepage": ""
+    ,"author": {
+         "name": "Erick Fleming"
+        ,"email": "erick@sudogs.com"
+    }
+    ,"repository": {}
+    ,"engines": {
         "node": ">= 0.10.0"
-    },
-    "dependencies": {
-        "send": "",
-        "router": "",
-        "request": "",
-        "lymph-utils": "",
-        "lymph-client": "",
-        "lymph-server": "",
-        "lymph-styles": ""
-    },
-    "devDependencies": {
-        "grunt": "",
-        "lymph-test": "",
-        "ftp": ""
+    }
+    ,"dependencies": {
+         "send": ""
+        ,"router": ""
+        ,"request": ""
+        ,"lymph-utils": "0.2.x"
+        ,"lymph-client": "0.2.x"
+        ,"lymph-server": "0.2.x"
+        ,"lymph-styles": "0.2.x"
+        ,"lymph-dates": "0.2.x"
+    }
+    ,"devDependencies": {
+         "lymph-test": ""
+        ,"lymph-build": ""
     }
 }
 
