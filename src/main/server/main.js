@@ -12,13 +12,7 @@ module.exports = function (send, request) {
         else if (req.url === "/cgi-bin/disks.com") {
             send(req, "disks.json").root("dat").pipe(res)
         }
-        else if (req.url.indexOf("/cgi-bin/faces_data.com") === 0) {
-            send(req, "faces_data.txt").root("dat").pipe(res)
-        }
-        else if (req.url === "/cgi-bin/measurements.com") {
-            send(req, "measurements.json").root("misc").pipe(res)
-        }
-        else if (req.url === "/facesAuth") {
+        else if (req.url === "/faces/auth") {
             scheduling.requestFaceAuth(request, function (err, authData) {
                 res.writeHead(200, {
                     "Content-Type": "application/json"
@@ -26,7 +20,7 @@ module.exports = function (send, request) {
                 res.end(JSON.stringify(scheduling.parseFacesAuth(authData)))
             })
         }
-        else if (req.url.indexOf("/facesData") === 0) {
+        else if (req.url.indexOf("/faces/data") === 0) {
             var pk = req.url.match(new RegExp("pk=([0-9a-z]*)"))[1]
             scheduling.requestFacesData(request, pk, 16, function (err, r) {
                 res.writeHead(200, {

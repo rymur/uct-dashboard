@@ -49,7 +49,7 @@ exports.run = function () {
             html.addClassTo("#navScheduling", "active")
             mainEl.html("")
             getFaceAuth(function (pk) {
-                ajaxGet("/facesData?pk=" + pk.key, function (data) {
+                ajaxGet("/faces/data?pk=" + pk.key, function (data) {
                     scheduling.buildView(mainEl, new Date(),
                         scheduling.separate(data))
                 })
@@ -63,14 +63,6 @@ exports.run = function () {
             ajax.get(xhr, "/cgi-bin/disks.com", function (data) {
                 mainEl.append(disks.buildView(disks.preProcess(data)))
             })
-        }
-    }
-}
-
-function flip (f) {
-    return function (a) {
-        return function (b) {
-            return f(b, a)
         }
     }
 }

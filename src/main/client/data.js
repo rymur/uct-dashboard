@@ -23,7 +23,7 @@ exports.facesAuth = function (ajaxGet, getKey, setKey) {
         var key = getKey()
 
         if (needsRefresh(key)) {
-            ajaxGet("/facesAuth", function (pk) {
+            ajaxGet("/faces/auth", function (pk) {
                 setKey({ value: pk, dateCached: Date.now() })
                 fn(pk)
             })
