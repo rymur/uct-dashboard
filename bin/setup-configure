@@ -11,7 +11,7 @@ mkdir /tmp/setup
 # creating an iptables rules file
 ################################################################################
 sudo iptables-save > /tmp/setup/rules
-sudo mv /tmp/setup/rules /etc/iptables.rules
+sudo cp /tmp/setup/rules /etc/iptables.rules
 
 # creating an iptables restore script
 ################################################################################
@@ -25,7 +25,7 @@ EOF
 
 # install iptables restore script
 ################################################################################
-sudo mv /tmp/setup/restore /etc/network/if-pre-up.d/iptables-restore
+sudo cp /tmp/setup/restore /etc/network/if-pre-up.d/iptables-restore
 sudo chmod +x /etc/network/if-pre-up.d/iptables-restore
 
 # this section is for setting up applications
@@ -37,4 +37,27 @@ sudo chown ubuntu "/var/local/$APP_NAME"
 
 sudo mkdir "/var/log/$APP_NAME"
 sudo chown ubuntu "/var/log/$APP_NAME"
+
+# create an upstart configuration file for app
+################################################################################
+cat << EOF > /tmp/setup/upstart.conf
+
+description     "$APP_NAME upstart conf"
+
+start on runlevel [2345]
+stop  on runlevel [06]
+
+respawn
+
+script
+    cd /home/ubuntu/$APP_NAME
+    exec su -c "/usr/bin/node bin/devit.js >> /var/log/$APP_NAME/std.log 2>&1" ubuntu
+end script
+
+post-start script
+   # Optionally put a script here that will notify you node has (re)started
+end script
+EOF
+
+sudo cp /tmp/setup/upstart.conf /etc/init/$APP_NAME.conf
 
