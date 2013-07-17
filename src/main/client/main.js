@@ -50,8 +50,7 @@ exports.run = function () {
             mainEl.html("")
             getFaceAuth(function (pk) {
                 ajaxGet("/faces/data?pk=" + pk.key, function (data) {
-                    scheduling.buildView(mainEl, new Date(),
-                        scheduling.separate(data))
+                    scheduling.buildView(mainEl, new Date(), data)
                 })
             })
         }

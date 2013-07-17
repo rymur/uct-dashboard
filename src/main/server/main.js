@@ -22,17 +22,27 @@ module.exports = function (send, request) {
         }
         else if (req.url.indexOf("/faces/data") === 0) {
             var pk = req.url.match(new RegExp("pk=([0-9a-z]*)"))[1]
-            scheduling.requestFacesData(request, pk, 16, function (err, r) {
+            getAllData(pk, function (allData) {
                 res.writeHead(200, {
                     "Content-Type": "application/json"
                 })
-                res.end(JSON.stringify(scheduling.parseFacesData(r.body, "50")))
+                res.end(JSON.stringify(allData))
             })
         }
         else {
             send(req, req.url).root("static").pipe(res)
         }
 
+    }
+
+    function getAllData (pk, cb) {
+        scheduling.requestFacesData(request, pk, 16, function (err, resFor50) {
+            var dataFor50 = scheduling.parseFacesData(resFor50.body, "50")
+            scheduling.requestFacesData(request, pk, 9, function (err, resFor40) {
+                var dataFor40 = scheduling.parseFacesData(resFor40.body, "40")
+                cb(scheduling.separate(dataFor50.concat(dataFor40)))
+            })
+        })
     }
 }
 

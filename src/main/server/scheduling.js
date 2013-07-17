@@ -73,3 +73,68 @@ exports.parseFacesData = function (rawData, scannerId) {
     }
 }
 
+exports.separate = function (data) {
+
+    var separatedData = []
+
+    data.forEach(function (e) {
+        if (isMultiday(e)) {
+            separatedData = separatedData.concat(splitByDays(e))
+        }
+        else {
+            separatedData.push(e)
+        } 
+    })
+
+    return separatedData
+
+    function splitByDays (e) {
+        var days = []
+        var d1 = new Date(e.start)
+        var d2 = new Date(e.end)
+        var firstDay = d1.getDate()
+        var lastDay = d2.getDate()
+
+        for (var i = firstDay; i <= lastDay; i++) {
+
+            var event = {
+                scanner: e.scanner,
+                start: e.start,
+                end: e.end,
+                account: e.account,
+                comment: e.comment,
+                part: e.part
+            }
+
+            if (i == firstDay) {
+                event.end = new Date(new Date(d1.getFullYear(),
+                    d1.getMonth(), i, 24, 0, 0, 0) - 1)
+
+                event.part = "begin"
+            }
+            else if (i == lastDay) {
+                event.start = new Date(d1.getFullYear(),
+                    d1.getMonth(), i, 0, 0, 0, 0)
+
+                event.part = "end"
+            }
+            else {
+                event.start = new Date(d1.getFullYear(),
+                    d1.getMonth(), i, 0, 0, 0, 0)
+                event.end = new Date(d1.getFullYear(),
+                    d1.getMonth(), i, 24, 0, 0, 0)
+
+                event.part = "middle"
+            }
+
+            days.push(event)
+        }
+        return days 
+    }
+
+    function isMultiday (e) {
+        var sd = new Date(e.start)
+        var ed = new Date(e.end)
+        return sd.getDate() !== ed.getDate()
+    }
+}
