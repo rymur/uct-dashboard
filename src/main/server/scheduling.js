@@ -47,7 +47,9 @@ exports.requestFacesData = function (request, pk, scannerId, done) {
 
 exports.parseFacesData = function (rawData, scannerId) {
 
-    return rawData.split("\n").slice(9).map(dataFromLine).map(extractFields)
+    var rawDataItems = rawData.split("\n")
+    
+    return rawDataItems.slice(9, rawDataItems.length - 1).map(dataFromLine).map(extractFields)
 
     function extractComment (data) {
         return data.slice(data.indexOf(" ", 43)).trim()
@@ -90,56 +92,80 @@ exports.separate = function (data) {
 
     function splitByDays (e) {
         var days = []
-        var d1 = new Date(e.start)
-        var d2 = new Date(e.end)
-        var firstDay = d1.getDate()
-        var lastDay = d2.getDate()
+        var firstDay = new Date(e.start).getUTCDate()
+        var lastDay = new Date(e.end).getUTCDate()
 
         for (var i = firstDay; i <= lastDay; i++) {
 
-            var event = {
-                scanner: e.scanner,
-                start: e.start,
-                end: e.end,
-                account: e.account,
-                comment: e.comment,
-                part: e.part
-            }
-
             if (i == firstDay) {
-                event.end = new Date(new Date(d1.getFullYear(),
-                    d1.getMonth(), i, 24, 0, 0, 0) - 1)
-
-                event.part = "begin"
+                days.push(eventWithDates(e,
+                    e.start,
+                    endOfDayFor(e.start, i),
+                    "begin"))
             }
             else if (i == lastDay) {
-                event.start = new Date(d1.getFullYear(),
-                    d1.getMonth(), i, 0, 0, 0, 0)
-
-                event.part = "end"
+                days.push(eventWithDates(e,
+                    startOfDayFor(e.start, i),
+                    e.end,
+                    "end"))
             }
             else {
-                event.start = new Date(d1.getFullYear(),
-                    d1.getMonth(), i, 0, 0, 0, 0)
-                event.end = new Date(d1.getFullYear(),
-                    d1.getMonth(), i, 24, 0, 0, 0)
-
-                event.part = "middle"
+                days.push(eventWithDates(e,
+                    startOfDayFor(e.start, i),
+                    endOfDayFor(e.start, i), "middle"))
             }
-
-            days.push(event)
         }
         return days 
     }
 
     function isMultiday (e) {
-        var sd = new Date(e.start)
-        var ed = new Date(e.end)
-        return sd.getDate() !== ed.getDate()
+        return new Date(e.start).getUTCDate() !== new Date(e.end).getUTCDate()
+    }
+
+    function toISODate (y, mo, d, h, m, s, ms) {
+        var date = y + "-" + mo + "-" + d
+        var time = h + ":" + m  + ":" + s + "." + ms
+        return new Date(date + "T" + time + "-0500")
+    }
+
+    function toUTCDate (y, mo, d, h, m, s, ms) {
+        var date = y + "-" + mo + "-" + d
+        var time = h + ":" + m  + ":" + s + "." + ms
+        return new Date(date + "T" + time + "Z").toISOString()
+    }
+
+    function endOfDayFor(date, da) {
+        var yy = padZero(new Date(date).getUTCFullYear())
+        var mo = padZero(new Date(date).getUTCMonth() + 1)
+        return toUTCDate(yy, mo, padZero(da), "23", "59", "59", "999")
+    }
+
+    function startOfDayFor(date, da) {
+        var yy = padZero(new Date(date).getUTCFullYear())
+        var mo = padZero(new Date(date).getUTCMonth() + 1)
+        return toUTCDate(yy, mo, padZero(da), "00", "00", "00", "000")
+    }
+
+    function eventWithDates (e, start, end, part) {
+        return {
+             scanner: e.scanner
+            ,start: start
+            ,end: end
+            ,account: e.account
+            ,comment: e.comment
+            ,part: part
+        }
+    }
+
+    function padZero (num) {
+        return num <= 9 ? "0"+num : num
     }
 }
 
 exports.parseFacesDate = function (date, time) {
-    return new Date(date + "T" + time + "-0500")
+    if (time && time.indexOf(24) === 0) {
+        time = "23:59:59.999"
+    }
+    return new Date(date + "T" + time + "-0500").toISOString()
 }
 

@@ -59,6 +59,7 @@ module.exports = lymphTest.suite("server scheduling", function (test) {
             ,"2013-05-24 16:00:00 2013-05-24 17:00:00 fe_nf1 Jean nf1 col2 bone | N/A"
             ,"2013-05-15 17:00:00 2013-05-16 06:00:00 fe_nasa VBX | N/A"
             ,"2013-06-07 16:00:00 2013-06-08 21:00:00 orear_plasmin  | N/A"
+            ,""
         ].join("\n")
 
         var processedData = [//{{
@@ -93,91 +94,83 @@ module.exports = lymphTest.suite("server scheduling", function (test) {
         assert.equals(parsed, processedData)
     })
 
-    test("breaks multi day events into separate events", function () {
+    test("break a single multi day events into separate events", function () {
+
+        //Wed May 15 2013 12:00:00 GMT-0500 (CDT))
+        //Thu May 16 2013 01:00:00 GMT-0500 (CDT)
+        var processedData = [//{{
+             { 
+                 scanner: "40"
+                ,start: "2013-05-15T17:00:00.000Z"
+                ,end: "2013-05-16T06:00:00.000Z"
+                ,account: "fe_nasa"
+                ,comment: "VBX"
+                ,part: "full"
+            }
+        ] //}}
+
+        var splitDays = scheduling.separate(processedData)
+
+        assert.equals(splitDays.length, 2)
+        assert.equals(splitDays[0].start, "2013-05-15T17:00:00.000Z")
+        assert.equals(splitDays[0].end, "2013-05-15T23:59:59.999Z")
+        assert.equals(splitDays[1].start, "2013-05-16T00:00:00.000Z")
+        assert.equals(splitDays[1].end, "2013-05-16T06:00:00.000Z")
+    })
+
+    test("not spliting single day events", function () {
 
         var processedData = [//{{
             { 
                  scanner: "40"
-                ,start: new Date("2013-05-24T16:00:00Z")
-                ,end: new Date("2013-05-24T17:00:00Z")
+                ,start: "2013-05-24T16:00:00.000Z"
+                ,end: "2013-05-24T17:00:00.000Z"
                 ,account: "fe_nf1"
                 ,comment: "Jean nf1 col2 bone"
                 ,part: "full"
             }
             ,{ 
                  scanner: "40"
-                ,start: new Date("2013-05-15T17:00:00Z")
-                ,end: new Date("2013-05-16T06:00:00Z")
+                ,start: "2013-05-15T17:00:00.000Z"
+                ,end: "2013-05-16T06:00:00.000Z"
                 ,account: "fe_nasa"
                 ,comment: "VBX"
                 ,part: "full"
             }
             ,{ 
                  scanner: "40"
-                ,start: new Date("2013-06-07T16:00:00Z")
-                ,end: new Date("2013-06-08T21:00:00Z")
+                ,start: "2013-06-07T16:00:00.000Z"
+                ,end: "2013-06-08T21:00:00.000Z"
                 ,account: "orear_plasmin"
                 ,comment: ""
                 ,part: "full"
             }
         ] //}}
 
-        var actual = scheduling.separate(processedData)
+        var splitDays = scheduling.separate(processedData)
 
-        var expected = [
-            { 
-            scanner: "40"
-            ,start: "2013-05-24T16:00:00.000Z"
-            ,end: "2013-05-24T17:00:00.000Z"
-            ,account: "fe_nf1"
-            ,comment: "Jean nf1 col2 bone"
-            ,part: "full"
-        }
-            ,{ 
-        scanner: "40"
-            ,start: "2013-05-15T17:00:00.000Z"
-            ,end: "2013-05-16T04:59:59.999Z"
-            ,account: "fe_nasa"
-            ,comment: "VBX"
-            ,part: "begin"
-            }
-            ,{ 
-        scanner: "40"
-            ,start: "2013-05-16T05:00:00.000Z"
-            ,end: "2013-05-16T06:00:00.000Z"
-            ,account: "fe_nasa"
-            ,comment: "VBX"
-            ,part: "end"
-            }
-            ,{ 
-        scanner: "40"
-            ,start: "2013-06-07T16:00:00.000Z"
-            ,end: "2013-06-08T04:59:59.999Z"
-            ,account: "orear_plasmin"
-            ,comment: ""
-            ,part: "begin"
-            }
-            ,{ 
-        scanner: "40"
-            ,start: "2013-06-08T05:00:00.000Z"
-            ,end: "2013-06-08T21:00:00.000Z"
-            ,account: "orear_plasmin"
-            ,comment: ""
-            ,part: "end"
-            }
-        ]
-
-        assert.equals(actual, expected)
+        assert.equals(splitDays.length, 5)
+        assert.equals(splitDays[0].part, "full")
     })
 
-    test("conver faces date to proper timezone", function () {
+    test("convert faces date to proper timezone", function () {
 
         var date = "2013-05-24"
         var time = "16:00:00"
 
-        var dt = scheduling.parseFacesDate(date, time)
+        var ds = scheduling.parseFacesDate(date, time)
 
-        assert.equals(dt.toString(), "Fri May 24 2013 16:00:00 GMT-0500 (CDT)")
+        assert.equals(ds, "2013-05-24T21:00:00.000Z")
+    })
+
+    test("convert faces dates with 24 hours", function () {
+
+        var date = "2013-05-24"
+        var time = "24:00:00"
+
+        var ds = scheduling.parseFacesDate(date, time)
+
+        assert.equals(ds, "2013-05-25T04:59:59.999Z")
     })
 })
 
