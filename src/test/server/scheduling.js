@@ -64,29 +64,30 @@ module.exports = lymphTest.suite("server scheduling", function (test) {
         var processedData = [//{{
             { 
                  scanner: "40"
-                ,start: new Date("2013-05-24T16:00:00-0500")
-                ,end: new Date("2013-05-24T17:00:00-0500")
+                ,start: "2013-05-24T21:00:00.000Z"
+                ,end: "2013-05-24T22:00:00.000Z"
                 ,account: "fe_nf1"
                 ,comment: "Jean nf1 col2 bone"
                 ,part: "full"
             }
             ,{ 
                  scanner: "40"
-                ,start: new Date("2013-05-15T17:00:00-0500")
-                ,end: new Date("2013-05-16T06:00:00-0500")
+                ,start: "2013-05-15T22:00:00.000Z"
+                ,end: "2013-05-16T11:00:00.000Z"
                 ,account: "fe_nasa"
                 ,comment: "VBX"
                 ,part: "full"
             }
             ,{ 
                  scanner: "40"
-                ,start: new Date("2013-06-07T16:00:00-0500")
-                ,end: new Date("2013-06-08T21:00:00-0500")
+                ,start: "2013-06-07T21:00:00.000Z"
+                ,end: "2013-06-09T02:00:00.000Z"
                 ,account: "orear_plasmin"
                 ,comment: ""
                 ,part: "full"
             }
         ] //}}
+
 
         var parsed = scheduling.parseFacesData(rawData)
         assert.equals(parsed, processedData)
@@ -97,24 +98,24 @@ module.exports = lymphTest.suite("server scheduling", function (test) {
         var processedData = [//{{
             { 
                  scanner: "40"
-                ,start: new Date("2013-05-24T16:00:00-0500")
-                ,end: new Date("2013-05-24T17:00:00-0500")
+                ,start: new Date("2013-05-24T16:00:00Z")
+                ,end: new Date("2013-05-24T17:00:00Z")
                 ,account: "fe_nf1"
                 ,comment: "Jean nf1 col2 bone"
                 ,part: "full"
             }
             ,{ 
                  scanner: "40"
-                ,start: new Date("2013-05-15T17:00:00-0500")
-                ,end: new Date("2013-05-16T06:00:00-0500")
+                ,start: new Date("2013-05-15T17:00:00Z")
+                ,end: new Date("2013-05-16T06:00:00Z")
                 ,account: "fe_nasa"
                 ,comment: "VBX"
                 ,part: "full"
             }
             ,{ 
                  scanner: "40"
-                ,start: new Date("2013-06-07T16:00:00-0500")
-                ,end: new Date("2013-06-08T21:00:00-0500")
+                ,start: new Date("2013-06-07T16:00:00Z")
+                ,end: new Date("2013-06-08T21:00:00Z")
                 ,account: "orear_plasmin"
                 ,comment: ""
                 ,part: "full"
@@ -126,40 +127,40 @@ module.exports = lymphTest.suite("server scheduling", function (test) {
         var expected = [
             { 
             scanner: "40"
-            ,start: new Date("2013-05-24T16:00:00-0500")
-            ,end: new Date("2013-05-24T17:00:00-0500")
+            ,start: "2013-05-24T16:00:00.000Z"
+            ,end: "2013-05-24T17:00:00.000Z"
             ,account: "fe_nf1"
             ,comment: "Jean nf1 col2 bone"
             ,part: "full"
         }
             ,{ 
         scanner: "40"
-            ,start: new Date("2013-05-15T17:00:00-0500")
-            ,end: new Date("2013-05-15T23:59:59.999-0500")
+            ,start: "2013-05-15T17:00:00.000Z"
+            ,end: "2013-05-16T04:59:59.999Z"
             ,account: "fe_nasa"
             ,comment: "VBX"
             ,part: "begin"
             }
             ,{ 
         scanner: "40"
-            ,start: new Date("2013-05-16T00:00:00-0500")
-            ,end: new Date("2013-05-16T06:00:00-0500")
+            ,start: "2013-05-16T05:00:00.000Z"
+            ,end: "2013-05-16T06:00:00.000Z"
             ,account: "fe_nasa"
             ,comment: "VBX"
             ,part: "end"
             }
             ,{ 
         scanner: "40"
-            ,start: new Date("2013-06-07T16:00:00-0500")
-            ,end: new Date("2013-06-07T23:59:59.999-0500")
+            ,start: "2013-06-07T16:00:00.000Z"
+            ,end: "2013-06-08T04:59:59.999Z"
             ,account: "orear_plasmin"
             ,comment: ""
             ,part: "begin"
             }
             ,{ 
         scanner: "40"
-            ,start: new Date("2013-06-08T00:00:00-0500")
-            ,end: new Date("2013-06-08T21:00:00-0500")
+            ,start: "2013-06-08T05:00:00.000Z"
+            ,end: "2013-06-08T21:00:00.000Z"
             ,account: "orear_plasmin"
             ,comment: ""
             ,part: "end"
@@ -169,6 +170,15 @@ module.exports = lymphTest.suite("server scheduling", function (test) {
         assert.equals(actual, expected)
     })
 
+    test("conver faces date to proper timezone", function () {
+
+        var date = "2013-05-24"
+        var time = "16:00:00"
+
+        var dt = scheduling.parseFacesDate(date, time)
+
+        assert.equals(dt.toString(), "Fri May 24 2013 16:00:00 GMT-0500 (CDT)")
+    })
 })
 
 function facesAuthData () {

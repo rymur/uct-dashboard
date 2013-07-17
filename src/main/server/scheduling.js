@@ -56,8 +56,8 @@ exports.parseFacesData = function (rawData, scannerId) {
     function extractFields (data) {
         var fields = data.split(" ")
         var comment = extractComment(data)
-        var start = new Date(fields[0] + " " + fields[1])
-        var end = new Date(fields[2] + " " + fields[3]) 
+        var start = exports.parseFacesDate(fields[0], fields[1])
+        var end = exports.parseFacesDate(fields[2], fields[3]) 
         return {
             scanner: scannerId ? scannerId : "40",
             start: start,
@@ -138,3 +138,8 @@ exports.separate = function (data) {
         return sd.getDate() !== ed.getDate()
     }
 }
+
+exports.parseFacesDate = function (date, time) {
+    return new Date(date + "T" + time + "-0500")
+}
+
