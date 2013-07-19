@@ -23,6 +23,11 @@ exports.buildView = function (mainEl, startDate, data) {
     mainEl.append(view)
 
     data.forEach(function (e) {
+
+        if (e.account === "sterling_tgfb") {
+            console.log(new Date(e.start), new Date(e.end))
+        }
+
         var startDate = new Date(e.start)
         var endDate = new Date(e.end)
         var day = document.getElementById(dateId(startDate))

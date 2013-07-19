@@ -45,36 +45,43 @@ exports.requestFacesData = function (request, pk, scannerId, done) {
     })
 }
 
+exports.parseFacesDataItem = function (scannerId) {
+
+    return function (rawData) {
+
+        return extractFields(dataFromLine(rawData))
+
+        function extractComment (data) {
+            return data.slice(data.indexOf(" ", 43)).trim()
+        }
+
+        function extractFields (data) {
+            var fields = data.split(" ")
+            var comment = extractComment(data)
+            var start = exports.parseFacesDate(fields[0], fields[1])
+            var end = exports.parseFacesDate(fields[2], fields[3]) 
+            return {
+                scanner: scannerId ? scannerId : "40",
+                start: start,
+                end: end,
+                account:   fields[4],
+                comment: comment,
+                part: "full"
+            }
+        }
+
+        function dataFromLine (line) {
+            return line.split("|")[0]
+        }
+    }
+}
+
 exports.parseFacesData = function (rawData, scannerId) {
 
     var rawDataItems = rawData.split("\n")
 
-    console.log(rawData)
-
-    return rawDataItems.slice(9, rawDataItems.length - 1).map(dataFromLine).map(extractFields)
-
-    function extractComment (data) {
-        return data.slice(data.indexOf(" ", 43)).trim()
-    }
-
-    function extractFields (data) {
-        var fields = data.split(" ")
-        var comment = extractComment(data)
-        var start = exports.parseFacesDate(fields[0], fields[1])
-        var end = exports.parseFacesDate(fields[2], fields[3]) 
-        return {
-            scanner: scannerId ? scannerId : "40",
-            start: start,
-            end: end,
-            account:   fields[4],
-            comment: comment,
-            part: "full"
-        }
-    }
-
-    function dataFromLine (line) {
-        return line.split("|")[0]
-    }
+    return rawDataItems.slice(9, rawDataItems.length - 1)
+        .map(exports.parseFacesDataItem(scannerId))
 }
 
 exports.separate = function (data) {
@@ -94,8 +101,8 @@ exports.separate = function (data) {
 
     function splitByDays (e) {
         var days = []
-        var firstDay = new Date(e.start).getUTCDate()
-        var lastDay = new Date(e.end).getUTCDate()
+        var firstDay = new Date(e.start).getDate()
+        var lastDay = new Date(e.end).getDate()
 
         for (var i = firstDay; i <= lastDay; i++) {
 
@@ -121,31 +128,25 @@ exports.separate = function (data) {
     }
 
     function isMultiday (e) {
-        return new Date(e.start).getUTCDate() !== new Date(e.end).getUTCDate()
+        return new Date(e.start).getDate() !== new Date(e.end).getDate()
     }
 
     function toISODate (y, mo, d, h, m, s, ms) {
         var date = y + "-" + mo + "-" + d
         var time = h + ":" + m  + ":" + s + "." + ms
-        return new Date(date + "T" + time + "-0500")
-    }
-
-    function toUTCDate (y, mo, d, h, m, s, ms) {
-        var date = y + "-" + mo + "-" + d
-        var time = h + ":" + m  + ":" + s + "." + ms
-        return new Date(date + "T" + time + "Z").toISOString()
+        return date + "T" + time + "-0500"
     }
 
     function endOfDayFor(date, da) {
-        var yy = padZero(new Date(date).getUTCFullYear())
-        var mo = padZero(new Date(date).getUTCMonth() + 1)
-        return toUTCDate(yy, mo, padZero(da), "23", "59", "59", "999")
+        var yy = padZero(new Date(date).getFullYear())
+        var mo = padZero(new Date(date).getMonth() + 1)
+        return toISODate(yy, mo, padZero(da), "23", "59", "59", "999")
     }
 
     function startOfDayFor(date, da) {
-        var yy = padZero(new Date(date).getUTCFullYear())
-        var mo = padZero(new Date(date).getUTCMonth() + 1)
-        return toUTCDate(yy, mo, padZero(da), "00", "00", "00", "000")
+        var yy = padZero(new Date(date).getFullYear())
+        var mo = padZero(new Date(date).getMonth() + 1)
+        return toISODate(yy, mo, padZero(da), "00", "00", "00", "000")
     }
 
     function eventWithDates (e, start, end, part) {
@@ -168,6 +169,10 @@ exports.parseFacesDate = function (date, time) {
     if (time && time.indexOf(24) === 0) {
         time = "23:59:59.999"
     }
-    return new Date(date + "T" + time + "-0500").toISOString()
+    else {
+        time = time + ".000"
+    }
+    
+    return date + "T" + time + "-0500"
 }
 

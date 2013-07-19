@@ -65,24 +65,24 @@ module.exports = lymphTest.suite("server scheduling", function (test) {
         var processedData = [//{{
             { 
                  scanner: "40"
-                ,start: "2013-05-24T21:00:00.000Z"
-                ,end: "2013-05-24T22:00:00.000Z"
+                ,start: "2013-05-24T16:00:00.000-0500"
+                ,end: "2013-05-24T17:00:00.000-0500"
                 ,account: "fe_nf1"
                 ,comment: "Jean nf1 col2 bone"
                 ,part: "full"
             }
             ,{ 
                  scanner: "40"
-                ,start: "2013-05-15T22:00:00.000Z"
-                ,end: "2013-05-16T11:00:00.000Z"
+                ,start: "2013-05-15T17:00:00.000-0500"
+                ,end: "2013-05-16T06:00:00.000-0500"
                 ,account: "fe_nasa"
                 ,comment: "VBX"
                 ,part: "full"
             }
             ,{ 
                  scanner: "40"
-                ,start: "2013-06-07T21:00:00.000Z"
-                ,end: "2013-06-09T02:00:00.000Z"
+                ,start: "2013-06-07T16:00:00.000-0500"
+                ,end: "2013-06-08T21:00:00.000-0500"
                 ,account: "orear_plasmin"
                 ,comment: ""
                 ,part: "full"
@@ -94,15 +94,42 @@ module.exports = lymphTest.suite("server scheduling", function (test) {
         assert.equals(parsed, processedData)
     })
 
+    test("parsing a single end-of-day event", function () {
+
+        var data = "2013-07-20 09:00:00 2013-07-20 24:00:00 sterling_tgfb  | N/A"
+        var parsed = scheduling.parseFacesDataItem("40")(data)
+
+        assert.equals(parsed, { 
+             scanner: "40"
+            ,start: "2013-07-20T09:00:00.000-0500"
+            ,end: "2013-07-20T23:59:59.999-0500"
+            ,account: "sterling_tgfb"
+            ,comment: ""
+            ,part: "full"
+        })
+    })
+
+    test("processing a single end-of-day event", function () {
+
+        var event = {
+             scanner: "40"
+            ,start: "2013-07-20T09:00:00.000-0500"
+            ,end: "2013-07-20T23:59:59.999-0500"
+            ,account: "sterling_tgfb"
+            ,comment: ""
+            ,part: "full"
+        }
+
+        assert.equals(scheduling.separate([event]), [event])
+    })
+
     test("break a single multi day events into separate events", function () {
 
-        //Wed May 15 2013 12:00:00 GMT-0500 (CDT))
-        //Thu May 16 2013 01:00:00 GMT-0500 (CDT)
         var processedData = [//{{
              { 
                  scanner: "40"
-                ,start: "2013-05-15T17:00:00.000Z"
-                ,end: "2013-05-16T06:00:00.000Z"
+                ,start: "2013-05-15T15:00:00.000-0500"
+                ,end: "2013-05-16T06:00:00.000-0500"
                 ,account: "fe_nasa"
                 ,comment: "VBX"
                 ,part: "full"
@@ -112,10 +139,12 @@ module.exports = lymphTest.suite("server scheduling", function (test) {
         var splitDays = scheduling.separate(processedData)
 
         assert.equals(splitDays.length, 2)
-        assert.equals(splitDays[0].start, "2013-05-15T17:00:00.000Z")
-        assert.equals(splitDays[0].end, "2013-05-15T23:59:59.999Z")
-        assert.equals(splitDays[1].start, "2013-05-16T00:00:00.000Z")
-        assert.equals(splitDays[1].end, "2013-05-16T06:00:00.000Z")
+        assert.equals(splitDays[0].start, "2013-05-15T15:00:00.000-0500")
+        assert.equals(splitDays[0].end, "2013-05-15T23:59:59.999-0500")
+        assert.equals(splitDays[0].part, "begin")
+        assert.equals(splitDays[1].start, "2013-05-16T00:00:00.000-0500")
+        assert.equals(splitDays[1].end, "2013-05-16T06:00:00.000-0500")
+        assert.equals(splitDays[1].part, "end")
     })
 
     test("not spliting single day events", function () {
@@ -123,24 +152,24 @@ module.exports = lymphTest.suite("server scheduling", function (test) {
         var processedData = [//{{
             { 
                  scanner: "40"
-                ,start: "2013-05-24T16:00:00.000Z"
-                ,end: "2013-05-24T17:00:00.000Z"
+                ,start: "2013-05-24T16:00:00.000-0500"
+                ,end: "2013-05-24T17:00:00.000-0500"
                 ,account: "fe_nf1"
                 ,comment: "Jean nf1 col2 bone"
                 ,part: "full"
             }
             ,{ 
                  scanner: "40"
-                ,start: "2013-05-15T17:00:00.000Z"
-                ,end: "2013-05-16T06:00:00.000Z"
+                ,start: "2013-05-15T17:00:00.000-0500"
+                ,end: "2013-05-16T06:00:00.000-0500"
                 ,account: "fe_nasa"
                 ,comment: "VBX"
                 ,part: "full"
             }
             ,{ 
                  scanner: "40"
-                ,start: "2013-06-07T16:00:00.000Z"
-                ,end: "2013-06-08T21:00:00.000Z"
+                ,start: "2013-06-07T16:00:00.000-0500"
+                ,end: "2013-06-08T21:00:00.000-0500"
                 ,account: "orear_plasmin"
                 ,comment: ""
                 ,part: "full"
@@ -153,24 +182,24 @@ module.exports = lymphTest.suite("server scheduling", function (test) {
         assert.equals(splitDays[0].part, "full")
     })
 
-    test("convert faces date to proper timezone", function () {
+    test("converts a normal faces date/time value", function () {
 
         var date = "2013-05-24"
         var time = "16:00:00"
 
         var ds = scheduling.parseFacesDate(date, time)
 
-        assert.equals(ds, "2013-05-24T21:00:00.000Z")
+        assert.equals(ds, "2013-05-24T16:00:00.000-0500")
     })
 
-    test("convert faces dates with 24 hours", function () {
+    test("convert faces date/times with 24:00:00 hour thingy", function () {
 
         var date = "2013-05-24"
         var time = "24:00:00"
 
         var ds = scheduling.parseFacesDate(date, time)
 
-        assert.equals(ds, "2013-05-25T04:59:59.999Z")
+        assert.equals(ds, "2013-05-24T23:59:59.999-0500")
     })
 })
 
