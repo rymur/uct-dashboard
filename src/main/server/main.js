@@ -40,7 +40,7 @@ module.exports = function (send, request) {
             var dataFor50 = scheduling.parseFacesData(resFor50.body, "50")
             scheduling.requestFacesData(request, pk, 9, function (err, resFor40) {
                 var dataFor40 = scheduling.parseFacesData(resFor40.body, "40")
-                cb(scheduling.separate(dataFor50.concat(dataFor40)))
+                cb(dataFor50.concat(dataFor40))
             })
         })
     }

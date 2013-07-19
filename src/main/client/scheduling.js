@@ -24,10 +24,6 @@ exports.buildView = function (mainEl, startDate, data) {
 
     data.forEach(function (e) {
 
-        if (e.account === "sterling_tgfb") {
-            console.log(new Date(e.start), new Date(e.end))
-        }
-
         var startDate = new Date(e.start)
         var endDate = new Date(e.end)
         var day = document.getElementById(dateId(startDate))
@@ -144,3 +140,83 @@ function timeSlots () {
     return slots
 }
 
+exports.separate = function (data) {
+
+    var separatedData = []
+
+    data.forEach(function (e) {
+        if (isMultiday(e)) {
+            separatedData = separatedData.concat(splitByDays(e))
+        }
+        else {
+            separatedData.push(e)
+        } 
+    })
+
+    return separatedData
+
+    function splitByDays (e) {
+        var days = []
+        var firstDay = new Date(e.start).getDate()
+        var lastDay = new Date(e.end).getDate()
+
+        for (var i = firstDay; i <= lastDay; i++) {
+
+            if (i == firstDay) {
+                days.push(eventWithDates(e,
+                    e.start,
+                    endOfDayFor(e.start, i),
+                    "begin"))
+            }
+            else if (i == lastDay) {
+                days.push(eventWithDates(e,
+                    startOfDayFor(e.start, i),
+                    e.end,
+                    "end"))
+            }
+            else {
+                days.push(eventWithDates(e,
+                    startOfDayFor(e.start, i),
+                    endOfDayFor(e.start, i), "middle"))
+            }
+        }
+        return days 
+    }
+
+    function isMultiday (e) {
+        return new Date(e.start).getDate() !== new Date(e.end).getDate()
+    }
+
+    function toISODate (y, mo, d, h, m, s, ms) {
+        var date = y + "-" + mo + "-" + d
+        var time = h + ":" + m  + ":" + s + "." + ms
+        return date + "T" + time + "-0500"
+    }
+
+    function endOfDayFor(date, da) {
+        var yy = padZero(new Date(date).getFullYear())
+        var mo = padZero(new Date(date).getMonth() + 1)
+        return toISODate(yy, mo, padZero(da), "23", "59", "59", "999")
+    }
+
+    function startOfDayFor(date, da) {
+        var yy = padZero(new Date(date).getFullYear())
+        var mo = padZero(new Date(date).getMonth() + 1)
+        return toISODate(yy, mo, padZero(da), "00", "00", "00", "000")
+    }
+
+    function eventWithDates (e, start, end, part) {
+        return {
+             scanner: e.scanner
+            ,start: start
+            ,end: end
+            ,account: e.account
+            ,comment: e.comment
+            ,part: part
+        }
+    }
+
+    function padZero (num) {
+        return num <= 9 ? "0"+num : num
+    }
+}
