@@ -2,7 +2,7 @@ var u = require("lymph-utils").utils
 var h = require("lymph-client").html
 var d = require("lymph-dates").dates
 
-exports.buildView = function (mainEl, startDate, data) {
+exports.buildCalendar = function (startDate) {
 
     var d = new Date(startDate.getFullYear(), startDate.getMonth(),
         startDate.getDate())
@@ -11,59 +11,48 @@ exports.buildView = function (mainEl, startDate, data) {
     var diff = d.getDate() - day + (day === 0 ? -6 : 1)
     var monday = new Date(d.setDate(diff))
 
-    var view =  h.SECTION(
-        h.HEADER(
-            h.I({ class: "icon-calendar" }),
-            h.SPAN("Schedule")
+    return h.SECTION(
+        h.H2(
+            h.IMG({ src: "/images/icon-calendar.svg", class: "icon" }),
+            h.SPAN({class: "section-title"}, "Schedule")
         ),
-        exports.timeSlotLabels(),
-        exports.daySlotColumns(monday)
+        h.DIV(
+            exports.timeSlotLabels(),
+            exports.daySlotColumns(monday)
+        )
     )
+}
 
-    mainEl.append(view)
+exports.eventNodes = function (data) {
+
+    var view = []
 
     data.forEach(function (e) {
 
         var startDate = new Date(e.start)
         var endDate = new Date(e.end)
-        var day = document.getElementById(dateId(startDate))
+        var ediv = h.DIV({ class: "event-" + e.scanner + " " + e.part },
+            e.account)
 
-        if (day !== null) {
+        var startHour = startDate.getHours()
+        var startPOS = ((startHour * 20) + 2) + 20
 
-            var ediv = h.DIV({ class: "event-" + e.scanner + " " + e.part },
-                e.account)
+        ediv.style.top = startPOS + "px"
+        ediv.style.height = ((hourDiff(endDate, startDate) * 20) - 7) + "px"
 
-            var startHour = startDate.getHours()
-            var startPOS = ((startHour * 20) + 2) + 20
-
-            ediv.style.top = startPOS + "px"
-            ediv.style.height = ((hourDiff(endDate, startDate) * 20) - 7) + "px"
-            day.appendChild(ediv)
-        }
+        view.push({ id:dateId(startDate), el:ediv})
     })
 
     return view
 }
 
-function dateId (dt) {
-    return dt.getFullYear() + "" + dt.getMonth() + "" + dt.getDate()
-}
-
-function hourDiff(date1, date2) {
-    var h1 = date1.getHours()
-    var h2 = date2.getHours()
-    if (date1.getMinutes() > 0) {
-        h1 = h1 + 1
-    }
-    return h1 - h2
-}
-
-function DateDiff(date1, date2) {
-    var datediff = date1.getTime() - date2.getTime()
-    return (datediff / (24*60*60*1000))
-}
-
 exports.timeSlotLabels = function () {
+
+    var splitTime = u.splitOn(":")
+
+    return h.DIV({ class: "day-label" },
+        h.DIV(h.space()),
+        timeSlots().map(timeSlotLabelsItem))
 
     function humanHour (h) {
         return h % 12 || 12
@@ -73,33 +62,27 @@ exports.timeSlotLabels = function () {
         return (h < 12) ? "am" : "pm"
     }
 
-    function parseTime (time) {
-        var t = time.split(":")
+    function parseTime (t) {
         return { h: t[0], m: t[1] }
     }
 
     function formatTimeSlotLabel (time) {
-        var t = parseTime(time)
+        var t = parseTime(splitTime(time))
         return (t.m == "30") ? h.space() : humanHour(t.h) + getAMPM(t.h)
     }
 
     function timeSlotLabelsItem (time) {
         return h.DIV({ class: "hour" }, formatTimeSlotLabel(time))
     }
-
-    return h.DIV({ class: "day-label" },
-        h.DIV(h.space()),
-        timeSlots().map(timeSlotLabelsItem)
-    )
 }
 
 exports.daySlotColumns = function (monday) {
 
+    return daySlots(monday).map(daySlotRows)
+
     function formatDaySlotLabel (date) {
-        var dw = d.translateDay(date.getDay())
-        var mo = (date.getMonth() + 1)
-        var da = date.getDate()
-        return dw + " " + mo + "/" + da
+        return d.translateDay(date.getDay()) + " " + (date.getMonth() + 1) +
+            "/" + date.getDate()
     }
 
     function formatDaySlotData (date) {
@@ -120,24 +103,6 @@ exports.daySlotColumns = function (monday) {
             timeSlots().map(daySlotRowsItem)
         )
     }
-
-    return daySlots(monday).map(daySlotRows)
-}
-
-function daySlots (startDate) {
-    var days = []
-    for (var i = 0; i < 7; i++) {
-        days.push(d.addDays(startDate, i))
-    }
-    return days
-}
-
-function timeSlots () {
-    var slots = []
-    for (var i = 0; i <= 23; i++) {
-        slots.push(i + ":00")
-    }
-    return slots
 }
 
 exports.separate = function (data) {
@@ -219,4 +184,38 @@ exports.separate = function (data) {
     function padZero (num) {
         return num <= 9 ? "0"+num : num
     }
+}
+
+function dateId (dt) {
+    return dt.getFullYear() + "" + dt.getMonth() + "" + dt.getDate()
+}
+
+function hourDiff(date1, date2) {
+    var h1 = date1.getHours()
+    var h2 = date2.getHours()
+    if (date1.getMinutes() > 0) {
+        h1 = h1 + 1
+    }
+    return h1 - h2
+}
+
+function DateDiff(date1, date2) {
+    var datediff = date1.getTime() - date2.getTime()
+    return (datediff / (24*60*60*1000))
+}
+
+function daySlots (startDate) {
+    var days = []
+    for (var i = 0; i < 7; i++) {
+        days.push(d.addDays(startDate, i))
+    }
+    return days
+}
+
+function timeSlots () {
+    var slots = []
+    for (var i = 0; i <= 23; i++) {
+        slots.push(i + ":00")
+    }
+    return slots
 }
