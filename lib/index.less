@@ -1,3 +1,8 @@
+* {
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
 h2 {
     margin: 0 0 5px 0;
 }
@@ -12,6 +17,24 @@ section {
 
 .section-title {
     margin-left: 10px;
+}
+
+.flow {
+    overflow: hidden;
+}
+
+.f-75 {
+    float: left;
+    width: 75%;
+}
+
+.f-25 {
+    float: left;
+    width: 25%;
+}
+
+#navigator {
+    border: 1px solid #ccc;
 }
 
 header.title {
@@ -114,6 +137,7 @@ div.day-slot-labels div.day {
 div.day-label {
     float: left;
     width: 5%;
+    color: #888;
     border-left: 1px solid #ccc;
     border-top: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
@@ -134,7 +158,7 @@ div.day-title {
 
 div.day {
     float: left;
-    width: 13%;
+    width: 13.5%;
     position: relative;
     border-top: 1px solid #ccc;
     border-bottom: 1px solid #ccc;

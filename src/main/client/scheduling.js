@@ -2,6 +2,8 @@ var u = require("lymph-utils").utils
 var h = require("lymph-client").html
 var d = require("lymph-dates").dates
 
+var calendar = require("./calendar")
+
 exports.buildCalendar = function (startDate) {
 
     var d = new Date(startDate.getFullYear(), startDate.getMonth(),
@@ -16,9 +18,12 @@ exports.buildCalendar = function (startDate) {
             h.IMG({ src: "/images/icon-calendar.svg", class: "icon" }),
             h.SPAN({class: "section-title"}, "Schedule")
         ),
-        h.DIV(
-            exports.timeSlotLabels(),
-            exports.daySlotColumns(monday)
+        h.DIV({class: "flow" },
+            h.DIV({class:"f-75"},
+                exports.timeSlotLabels(),
+                exports.daySlotColumns(monday)
+            ),
+            h.DIV({id: "navigator", class:"f-25"}, calendar(d))
         )
     )
 }
