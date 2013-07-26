@@ -265,3 +265,67 @@ img.icon {
     /*border: 1px solid red;*/
 /*}*/
 
+.calendar {
+    overflow: hidden;
+    padding: 0px;
+}
+
+.calendar caption {
+    background: hsl(0, 0%, 25%);
+    font-size: 1.25em;
+    font-weight: bold;
+    padding: 3px;
+    margin: 0px;
+    color: hsl(0, 0%, 99%);
+}
+
+.calendar table {
+    float:left;
+    width: 100%;
+    border: 1px solid #ccc;
+    padding: 3px;
+    border-spacing: 1px;
+    border-collapse: separate;
+}
+
+.calendar th {
+    color: hsl(0, 0%, 35%);
+}
+
+.calendar td {
+    border: 1px solid #ccc;
+    width: 14%;
+    text-align: center;
+    cursor: pointer;
+}
+
+.calendar tbody tr:hover {
+    background-color: #ccc;
+}
+
+.calendar {
+    overflow: hidden;
+}
+
+#calPrev {
+    float: left;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+#calNext {
+    float: right;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.blockout {
+    background: #c0c0c0;
+    color: hsl(0, 0%, 35%);
+}
+
+.blockout-selecting {
+    background: orange;
+    color: hsl(0, 0%, 35%);
+}
+

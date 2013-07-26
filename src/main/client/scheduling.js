@@ -23,7 +23,7 @@ exports.buildCalendar = function (startDate) {
                 exports.timeSlotLabels(),
                 exports.daySlotColumns(monday)
             ),
-            h.DIV({id: "navigator", class:"f-25"}, calendar(d))
+            h.DIV({id: "navigator", class:"f-25 calendar"}, calendar.generateView(2013, 7))
         )
     )
 }
