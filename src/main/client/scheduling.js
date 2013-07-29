@@ -1,6 +1,6 @@
 var u = require("lymph-utils").utils
 var h = require("lymph-client").html
-var d = require("lymph-dates").dates
+var dates = require("lymph-dates").dates
 
 var calendar = require("./calendar")
 
@@ -9,15 +9,14 @@ exports.buildCalendar = function (startDate) {
     var d = new Date(startDate.getFullYear(), startDate.getMonth(),
         startDate.getDate())
 
+    var currentWeek = dates.weekNumber(d)[1]
     var day = d.getDay()
     var diff = d.getDate() - day + (day === 0 ? -6 : 1)
     var monday = new Date(d.setDate(diff))
 
-    var calendarView = calendar.view(d.getFullYear(), d.getMonth())
-
-    calendarView.addEventListener("changed", function (evt) {
-        console.log("you changed", evt.detail)
-    }, false)
+    var calendarView = calendar.create({
+        send: function (x) {console.log("bus fired", x.data)}
+    })
 
     return h.SECTION(
         h.H2(
@@ -27,7 +26,8 @@ exports.buildCalendar = function (startDate) {
             h.DIV({class:"f-75"},
                 exports.timeSlotLabels(),
                 exports.daySlotColumns(monday)),
-            h.DIV({id: "navigator", class:"f-25"}, calendarView)))
+            h.DIV({id: "navigator", class:"f-25"}, calendarView(
+                d.getFullYear(), d.getMonth(), currentWeek))))
 }
 
 exports.eventNodes = function (data) {
@@ -88,7 +88,7 @@ exports.daySlotColumns = function (monday) {
     return daySlots(monday).map(daySlotRows)
 
     function formatDaySlotLabel (date) {
-        return d.translateDay(date.getDay()) + " " + (date.getMonth() + 1) +
+        return dates.translateDay(date.getDay()) + " " + (date.getMonth() + 1) +
             "/" + date.getDate()
     }
 
@@ -214,7 +214,7 @@ function DateDiff(date1, date2) {
 function daySlots (startDate) {
     var days = []
     for (var i = 0; i < 7; i++) {
-        days.push(d.addDays(startDate, i))
+        days.push(dates.addDays(startDate, i))
     }
     return days
 }

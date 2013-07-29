@@ -1,7 +1,9 @@
 var lymphClient = require("lymph-client")
 var lymphUtils = require("lymph-utils")
 
+var f = lymphUtils.utils
 var arrays = lymphUtils.arrays
+var objects = lymphUtils.objects
 
 var h = lymphClient.html
 var events = lymphClient.events
@@ -13,45 +15,65 @@ var monthNames = ["January", "February", "March", "April", "May", "June",
 
 var dayNames = ["Sun", "Mon", "Tue", "Wed", "Thr", "Fri", "Sat"]
 
-exports.view = function (year, month, week) {
-    var model = exports.modelFor(year, month)
-    var tbody = h.TBODY(exports.tableBody(model, week))
+exports.create = function (bus) {
 
-    var tbl = h.TABLE({class:"calendar"},
-        tableCaption(year, month),
-        h.THEAD(calDaysOfWeek(dayNames)), tbody)
+    var model = null
+    var title = h.SPAN("")
+
+    var tcaption = h.CAPTION(
+         h.SPAN({id:"cal-prev"}, "<")
+        ,title
+        ,h.SPAN({id:"cal-next"}, ">"))
+
+    var thead = h.THEAD(calDaysOfWeek(dayNames))
+    var tbody = h.TBODY({})
+    var tbl = h.TABLE({class:"calendar"}, tcaption, thead, tbody)
 
     events.add(tbl, "click", function (t) {
-        switch (t.target.id) {
-            case "cal-next":
-                events.trigger(tbl, events.custom("changed", {dir: "next"}))
-                h.clear(tbody)
-                month = month + 1
-                arrays.each(appendChild(tbody), exports.tableBody(
-                    exports.modelFor(year, month), week))
-                break
-            case "cal-prev": 
-                events.trigger(tbl, events.custom("changed", {dir: "next"}))
-                h.clear(tbody)
-                month = month - 1
-                arrays.each(appendChild(tbody), exports.tableBody(
-                    exports.modelFor(year, month), week))
-                break
+        if (t.target.id === "cal-next" || t.target.id === "cal-prev") {
+            var event = changedEvent(t.target.id, model)
+            h.clear(tbody)
+            render (event.data[0], event.data[1], event.data[2])
+            bus.send(event)
+        }
+        else if (t.target.hasAttribute("data-week")){
+            h.removeClass("active", tbl.querySelector("tr.active"))
+            h.addClass("active", t.target.parentElement)
+            bus.send({
+                 name:"calendar:selected"
+                ,data: t.target.getAttribute("data-week")
+            })
         }
     })
 
-    return tbl
-}
+    return render
 
-function appendChild (parent) {
-    return function (child) {
-        parent.appendChild(child)
+    function render (year, month, currentWeek) {
+        model = exports.modelFor(year, month, currentWeek)
+        console.log(model)
+        title.innerHTML = tableCaption(model.year, model.month)
+
+        arrays.each(function (x) {
+            tbody.appendChild(x)
+        }, exports.daysView(model))
+
+        return tbl
     }
 }
 
-exports.modelFor = function (year, month) {
+exports.daysView = function (model) {
+    return objects.values(exports.tableBody(model.weeks, model.currentWeek))
+}
+
+exports.modelFor = function (year, month, week) {
     var sd = exports.startDate(year, month)
-    var weeks = []
+    var startWeekNumber = parseInt(dates.weekNumber(sd)[1], 10)
+    var model = {
+         year: year
+        ,month: month
+        ,currentWeek: week
+        ,weeks: []
+    }
     var days = []
     var count = 0
 
@@ -61,10 +83,10 @@ exports.modelFor = function (year, month) {
         for (var y = 0; y < 7; y++) {
             days.push(dates.addDays(sd, count++).getDate())
         }
-        weeks.push(days)    
+        model.weeks.push({num: startWeekNumber + x, days: days})
     }
 
-    return weeks
+    return model
 }
 
 exports.startDate = function (year, month) {
@@ -74,23 +96,25 @@ exports.startDate = function (year, month) {
     return new Date(year, month - 1, correctedPrevLastDate)
 }
 
-exports.tableRow = function (days, isCurrent) {
-    var attributes = (isCurrent) ? {class:"current"} : {}
-    return h.TR(attributes, arrays.map(function (d) {
-        return h.TD(d)
-    }, days))
+exports.tableRow = function (week, current) {
+    return h.TR(attr(week.num, current), arrays.map(function (y) {
+        return h.TD({dataWeek: week.num}, y)
+    }, week.days))
+
+
+    function attr (num, current) {
+        return num === current ? {class:"active"} : {}
+    }
 }
 
 exports.tableBody = function (weeks, current) {
-    return arrays.map(function (days) {
-        return exports.tableRow(days, current)
+    return arrays.map(function (w) {
+        return exports.tableRow(w, current)
     }, weeks)
 }
 
 function tableCaption (year, month) {
-    return h.CAPTION(h.SPAN({id:"cal-prev"}, "<"),
-                     h.SPAN(monthNames[month] + " " + year),
-                     h.SPAN({id:"cal-next"}, ">"))
+    return monthNames[month] + " " + year
 }
 
 function adjustDayOfWeek (jsDayOfWeek) {
@@ -101,5 +125,18 @@ function calDaysOfWeek (names) {
     return h.TR(arrays.map(function (n) {
         return h.TH(n)
     }, names))
+}
+
+function changedEvent (id, model) {
+    switch (id) {
+        case "cal-next": return {
+             name: "calendar:next"
+            ,data: [ model.year, model.month + 1, model.currentWeek ]
+        }
+        case "cal-prev": return {
+             name: "calendar:prev"
+            ,data: [ model.year, model.month - 1, model.currentWeek ]
+        }
+    }
 }
 
