@@ -265,67 +265,57 @@ img.icon {
     /*border: 1px solid red;*/
 /*}*/
 
-.calendar {
-    overflow: hidden;
-    padding: 0px;
-}
-
-.calendar caption {
-    background: hsl(0, 0%, 25%);
-    font-size: 1.25em;
-    font-weight: bold;
-    padding: 3px;
-    margin: 0px;
-    color: hsl(0, 0%, 99%);
-}
-
-.calendar table {
-    float:left;
+table.calendar {
     width: 100%;
     border: 1px solid #ccc;
     padding: 3px;
     border-spacing: 1px;
     border-collapse: separate;
-}
 
-.calendar th {
-    color: hsl(0, 0%, 35%);
-}
+    caption {
+        background: hsl(0, 0%, 25%);
+        font-size: 1.25em;
+        font-weight: bold;
+        padding: 3px;
+        margin: 0px;
+        color: hsl(0, 0%, 99%);
+    }
 
-.calendar td {
-    border: 1px solid #ccc;
-    width: 14%;
-    text-align: center;
-    cursor: pointer;
-}
+    th {
+        color: hsl(0, 0%, 35%);
+    }
 
-.calendar tbody tr:hover {
-    background-color: #ccc;
-}
+    td {
+        border: 1px solid #ccc;
+        width: 14%;
+        text-align: center;
+        cursor: pointer;
+    }
 
-.calendar {
-    overflow: hidden;
-}
+    tbody tr:hover {
+        background-color: #ccc;
+    }
 
-#calPrev {
-    float: left;
-    margin-left: 10px;
-    cursor: pointer;
-}
+    .blockout {
+        background: #c0c0c0;
+        color: hsl(0, 0%, 35%);
+    }
 
-#calNext {
-    float: right;
-    margin-right: 10px;
-    cursor: pointer;
-}
+    .blockout-selecting {
+        background: orange;
+        color: hsl(0, 0%, 35%);
+    }
 
-.blockout {
-    background: #c0c0c0;
-    color: hsl(0, 0%, 35%);
-}
+    #cal-prev {
+        float: left;
+        margin-left: 10px;
+        cursor: pointer;
+    }
 
-.blockout-selecting {
-    background: orange;
-    color: hsl(0, 0%, 35%);
+    #cal-next {
+        float: right;
+        margin-right: 10px;
+        cursor: pointer;
+    }
 }
 

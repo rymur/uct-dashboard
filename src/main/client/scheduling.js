@@ -13,19 +13,21 @@ exports.buildCalendar = function (startDate) {
     var diff = d.getDate() - day + (day === 0 ? -6 : 1)
     var monday = new Date(d.setDate(diff))
 
+    var calendarView = calendar.view(d.getFullYear(), d.getMonth())
+
+    calendarView.addEventListener("changed", function (evt) {
+        console.log("you changed", evt.detail)
+    }, false)
+
     return h.SECTION(
         h.H2(
             h.IMG({ src: "/images/icon-calendar.svg", class: "icon" }),
-            h.SPAN({class: "section-title"}, "Schedule")
-        ),
+            h.SPAN({class: "section-title"}, "Schedule")),
         h.DIV({class: "flow" },
             h.DIV({class:"f-75"},
                 exports.timeSlotLabels(),
-                exports.daySlotColumns(monday)
-            ),
-            h.DIV({id: "navigator", class:"f-25 calendar"}, calendar.generateView(2013, 7))
-        )
-    )
+                exports.daySlotColumns(monday)),
+            h.DIV({id: "navigator", class:"f-25"}, calendarView)))
 }
 
 exports.eventNodes = function (data) {
@@ -45,7 +47,7 @@ exports.eventNodes = function (data) {
         ediv.style.top = startPOS + "px"
         ediv.style.height = ((hourDiff(endDate, startDate) * 20) - 7) + "px"
 
-        view.push({ id:dateId(startDate), el:ediv})
+        view.push({id:dateId(startDate), el:ediv})
     })
 
     return view
