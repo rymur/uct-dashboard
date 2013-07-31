@@ -2,6 +2,7 @@ var u = require("lymph-utils").utils
 var h = require("lymph-client").html
 var dates = require("lymph-dates").dates
 
+var WeekCalendar = require("./weekCalendar")
 var calendar = require("./calendar")
 
 exports.buildCalendar = function (startDate) {
@@ -14,7 +15,9 @@ exports.buildCalendar = function (startDate) {
     var diff = d.getDate() - day + (day === 0 ? -6 : 1)
     var monday = new Date(d.setDate(diff))
 
-    var calendarView = calendar.create({
+    var calendarModel = WeekCalendar.modelFor(d.getFullYear(), d.getMonth())
+
+    var calendarView = calendar.create(calendarModel, {
         send: function (x) {console.log("bus fired", x.data)}
     })
 
