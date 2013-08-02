@@ -27,12 +27,6 @@ module.exports = lymphTest.suite("WeekView", function (test) {
         assert.equals(r1.tagName, "SPAN")
     })
 
-    test("convert an hour index to human hour", function () {
-        assert.equals(WeekView.humanHour(0), "12am")
-        assert.equals(WeekView.humanHour(1), "1am")
-        assert.equals(WeekView.humanHour(15), "3pm")
-    })
-
     test("rows and columns", function () {
         console.log(WeekView.weekColLabels(new Date(2013, 7, 1)))
     })

@@ -16,9 +16,9 @@ _.divs = function (top, attr, fn) {
     }, arrays.range(0, top))
 }
 
-_.humanHour = function (hourIndex) {
-    return (hourIndex % 12 || 12) + ((hourIndex < 12) ? "am" : "pm")
-}
+_.cols = utils.partial(_.divs, 7)
+
+_.rows = utils.partial(_.divs, 24)
 
 _.dayLabel = function (initialDate) {
     return function (day) {
@@ -28,11 +28,7 @@ _.dayLabel = function (initialDate) {
     }
 }
 
-_.cols = utils.partial(_.divs, 7)
-
-_.rows = utils.partial(_.divs, 24)
-
-_.hourLabel = utils.compose(html.SPAN, _.humanHour)
+_.hourLabel = utils.compose(html.SPAN, dates.humanHour)
 
 _.weekCells = _.cols(
     {class:"day"}, utils.partial(_.rows, {class:"time"}, html.space))
