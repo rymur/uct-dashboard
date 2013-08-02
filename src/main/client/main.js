@@ -10,6 +10,8 @@ var data = require("./data")
 var disks = require("./disks")
 var scheduling = require("./scheduling")
 var measurements = require("./measurements")
+var WeekView = require("./WeekView")
+var WeekCalendar = require("./weekCalendar")
 
 exports.run = function () {
 
@@ -63,13 +65,25 @@ exports.run = function () {
         }
 
         else if (path === "/admin") {
+
             deactivateTabs()
+
             html.addClassTo("#navAdmin", "active")
             html.clear(mainNode)
-            ajaxGet("/cgi-bin/disks.com", function (data) {
-                console.log("TODO: admin needs workd", disks.buildView(
-                    disks.preProcess(data)))
-            })
+
+            mainNode.appendChild(
+                WeekView.weekColLabels(WeekCalendar.startDate(2013, 7)))
+
+            mainNode.appendChild(WeekView.weekRowLabels)
+
+            arrays.each(function (x) {
+                mainNode.appendChild(x)
+            }, WeekView.weekCells)
+
+            //ajaxGet("/cgi-bin/disks.com", function (data) {
+                //console.log("TODO: admin needs workd", disks.buildView(
+                    //disks.preProcess(data)))
+            //})
         }
     }
 
