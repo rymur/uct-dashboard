@@ -8,16 +8,16 @@ var arrays = lymphUtils.arrays
 var data = require("./data")
 
 var disks = require("./disks")
-var scheduling = require("./scheduling")
+var Scheduling = require("./scheduling")
 var measurements = require("./measurements")
 var WeekView = require("./WeekView")
 var WeekCalendar = require("./weekCalendar")
-var EventView = require("./EventView")
 
 exports.run = function () {
 
     var xhr = new XMLHttpRequest()
     var mainNode = document.getElementById("main")
+    var scheduling = Scheduling.create()
 
     var getKey = f.partial(data.getKey, sessionStorage)
     var setKey = f.partial(data.setKey, sessionStorage)
@@ -51,9 +51,10 @@ exports.run = function () {
             deactivateTabs()
             html.addClassTo("#navScheduling", "active")
             html.clear(mainNode)
+            mainNode.appendChild(scheduling.el)
 
             ajaxGet("/faces-sample-data.json", function (data) {
-                scheduling.render(mainNode, data)
+                scheduling.render(data)
             })
 
             //getFacesAuth(function (pk) {

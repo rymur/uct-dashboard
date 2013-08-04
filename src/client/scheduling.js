@@ -12,7 +12,7 @@ var WeekView = require("./WeekView")
 var EventView = require("./EventView")
 var calendar = require("./calendar")
 
-exports.render = function (mainNode, eventData) {
+exports.create = function () {
 
     var d = new Date()
     var currentWeek = dates.weekNumber(d)[1]
@@ -26,20 +26,25 @@ exports.render = function (mainNode, eventData) {
         send: function (x) {console.log("bus fired", x.data)}
     })
 
-    mainNode.appendChild(h.SECTION(
+    var weekView = WeekView.create()
+
+    var container = h.SECTION(
         h.H2(
             h.IMG({ src: "/images/icon-calendar.svg", class: "icon" }),
             h.SPAN({class: "section-title"}, "Schedule")),
         h.DIV({class: "flow" },
-            h.DIV({class:"f-75"}, WeekView.create()),
+            h.DIV({class:"f-75"}, weekView.el),
             h.DIV({id: "navigator", class:"f-25"}, calendarView(
-                d.getFullYear(), d.getMonth(), currentWeek)))))
+                d.getFullYear(), d.getMonth(), currentWeek))))
 
-    arrays.each(EventView.appendNode,
-        arrays.map(EventView.eventNode, exports.separate(eventData)))
+    return {el:container, render:render}
+
+    function render (eventData) {
+        weekView.render(separate(eventData))
+    }
 }
 
-exports.separate = function (data) {
+function separate (data) {
 
     var separatedData = []
 
@@ -133,7 +138,7 @@ exports.suite = function (test, assert) {
             ,part: "full"
         }
 
-        assert.equals(exports.separate([event]), [event])
+        assert.equals(separate([event]), [event])
     })
 
     test("break a single multi day events into separate events", function () {
@@ -149,7 +154,7 @@ exports.suite = function (test, assert) {
             }
         ] //}}
 
-        var splitDays = exports.separate(processedData)
+        var splitDays = separate(processedData)
 
         assert.equals(splitDays.length, 2)
         assert.equals(splitDays[0].start, "2013-05-15T15:00:00.000-0500")
@@ -189,11 +194,10 @@ exports.suite = function (test, assert) {
             }
         ] //}}
 
-        var splitDays = exports.separate(processedData)
+        var splitDays = separate(processedData)
 
         assert.equals(splitDays.length, 5)
         assert.equals(splitDays[0].part, "full")
     })
-
 }
 

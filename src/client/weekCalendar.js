@@ -1,5 +1,3 @@
-var _ = exports
-
 var lymphUtils = require("lymph-utils")
 var lymphDates = require("lymph-dates")
 
@@ -7,36 +5,49 @@ var utils  = lymphUtils.utils
 var arrays = lymphUtils.arrays
 var dates  = lymphDates.dates
 
-_.modelFor = function (year, month) {
+exports.modelFor = function (year, month) {
     return arrays.map(
-        utils.partial(_.buildMonth, year, month), arrays.range(-6, 6))
+        utils.partial(buildMonth, year, month), arrays.range(-6, 6))
 }
 
-_.startDate = function (year, month) {
-    var firstDayOfWeek = _.adjustSundays(new Date(year, month, 1).getDay())
+exports.startDate = function (year, month) {
+    var firstDayOfWeek = adjustSundays(new Date(year, month, 1).getDay())
     var lastDateOfPrevMonth = new Date(year, month, 0).getDate()
 
     return new Date(
         year, month - 1, lastDateOfPrevMonth - (firstDayOfWeek - 2))
 }
 
-_.adjustSundays = function (day) {
+exports.dateId = function (dt) {
+    return dt.getFullYear() + "" + dt.getMonth() + "" + dt.getDate()
+}
+
+exports.hourDiff = function (date1, date2) {
+    var h1 = date1.getHours()
+    var h2 = date2.getHours()
+    if (date1.getMinutes() > 0) {
+        h1 = h1 + 1
+    }
+    return h1 - h2
+}
+
+function adjustSundays (day) {
     return day === 0 ? 7 : day
 }
 
-_.buildMonth = function (year, month, offset) {
+function buildMonth (year, month, offset) {
     var firstOfMonth = new Date(year, month, 1)
     var offsetted = dates.addMonths(firstOfMonth, offset)
     return {
          year: offsetted.getFullYear() 
         ,month: offsetted.getMonth()
-        ,weeks: _.buildWeeks(offsetted.getFullYear(), offsetted.getMonth())
+        ,weeks: buildWeeks(offsetted.getFullYear(), offsetted.getMonth())
     }
 }
 
-_.buildWeeks = function (year, month) {
+function buildWeeks (year, month) {
 
-    var sd = _.startDate(year, month)
+    var sd = exports.startDate(year, month)
     var firstWeekNumber = parseInt(dates.weekNumber(sd)[1], 10)
     var count = 0
 
@@ -52,19 +63,6 @@ _.buildWeeks = function (year, month) {
     }
 
     return weeks
-}
-
-_.hourDiff = function (date1, date2) {
-    var h1 = date1.getHours()
-    var h2 = date2.getHours()
-    if (date1.getMinutes() > 0) {
-        h1 = h1 + 1
-    }
-    return h1 - h2
-}
-
-_.dateId = function (dt) {
-    return dt.getFullYear() + "" + dt.getMonth() + "" + dt.getDate()
 }
 
 exports.suite = function (test, assert) {
@@ -85,21 +83,21 @@ exports.suite = function (test, assert) {
     })
 
     test("creates a +/- month given a the year, a month & the 'step'", function () {
-        var d1 = exports.buildMonth(2013, 7, -1)
+        var d1 = buildMonth(2013, 7, -1)
         assert.equals(d1.year, 2013)
         assert.equals(d1.month, 6)
 
-        var d2 = exports.buildMonth(2013, 7, 0)
+        var d2 = buildMonth(2013, 7, 0)
         assert.equals(d2.year, 2013)
         assert.equals(d2.month, 7)
 
-        var d3 = exports.buildMonth(2013, 7, 1)
+        var d3 = buildMonth(2013, 7, 1)
         assert.equals(d3.year, 2013)
         assert.equals(d3.month, 8)
     })
 
     test("creates an array of 'calendar weeks' for a given year & month", function () {
-        assert.equals(exports.buildWeeks(2013, 7), [
+        assert.equals(buildWeeks(2013, 7), [
              {num:31, days:[29, 30, 31,  1,  2,  3,  4]}
             ,{num:32, days:[ 5,  6,  7,  8,  9, 10, 11]} 
             ,{num:33, days:[12, 13, 14, 15, 16, 17, 18]}
@@ -108,7 +106,7 @@ exports.suite = function (test, assert) {
             ,{num:36, days:[ 2,  3,  4,  5,  6,  7,  8]}
         ])
 
-        assert.equals(exports.buildWeeks(2013, 1), [
+        assert.equals(buildWeeks(2013, 1), [
              {num:5, days:[28, 29, 30, 31,  1,  2,  3]}
             ,{num:6, days:[ 4,  5,  6,  7,  8,  9, 10]}
             ,{num:7, days:[11, 12, 13, 14, 15, 16, 17]}

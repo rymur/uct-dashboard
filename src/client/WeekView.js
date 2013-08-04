@@ -12,6 +12,7 @@ var html = lymphClient.html
 var cols = utils.partial(divs, 7)
 var rows = utils.partial(divs, 24)
 var hourLabel = utils.compose(html.SPAN, dates.humanHour)
+
 var weekRowLabels = html.DIV({class:"day-label"},
     rows(staticAttr({class:"hour"}), hourLabel))
 
@@ -22,7 +23,11 @@ exports.create = function () {
     var container = html.DIV({class:"f-75"},
         weekColLabels(sd), weekRowLabels, weekCells(sd))
 
-    return container
+    return {el:container, render:render}
+
+    function render (data) {
+        arrays.each(appendNode, arrays.map(eventNode, data))
+    }
 }
 
 function divs (top, attrFn, childenFn) {
@@ -59,6 +64,25 @@ function weekColLabels (date) {
     return html.DIV({class:"week-col-label"},
         html.DIV({class:"day-title"}, html.space()),
         divs(7, staticAttr({class:"day-title"}), dayLabel(date)))
+}
+
+function eventNode (event) {
+
+    var sd = new Date(event.start)
+    var ed = new Date(event.end)
+
+    var node = html.DIV(
+        {class:"event-" + event.scanner + " " + event.part}, event.account)
+
+    node.style.top = (((sd.getHours() * 20) + 2)) + "px"
+    node.style.height = ((WeekCalendar.hourDiff(ed, sd) * 20) - 7) + "px"
+
+    return { id:WeekCalendar.dateId(sd), el:node }
+}
+
+function appendNode (node) {
+    var x = document.getElementById(node.id)
+    if (x !== null) x.appendChild(node.el)
 }
 
 exports.suite = function (test, assert) {
