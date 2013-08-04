@@ -67,3 +67,30 @@ _.weekColLabels = function (date) {
         _.divs(7, _.staticAttr({class:"day-title"}), _.dayLabel(date)))
 }
 
+exports.suite = function (test, assert) {
+
+    test("create a set of divs column for each day of the week", function () {
+        var attr = exports.staticAttr({class:"foo"})
+        var r1 = exports.cols(attr, function (x) { return "" })
+        assert.equals(r1.length, 7)
+        assert.equals(r1[0].tagName, "DIV")
+        assert.equals(r1[0].className, "foo")
+        assert.equals(r1[0].innerHTML, "")
+    })
+
+    test("creates a set of divs for each hour of a day", function () {
+        var attr = exports.staticAttr({class:"foo"})
+        var r1 = exports.rows(attr, function (x) { return "" })
+        assert.equals(r1.length, 24)
+        assert.equals(r1[1].tagName, "DIV")
+        assert.equals(r1[1].className, "foo")
+        assert.equals(r1[1].innerHTML, "")
+    })
+
+    test("create an hour label", function () {
+        var r1 = exports.hourLabel(1)
+        assert.equals(r1.innerHTML, "1am")
+        assert.equals(r1.tagName, "SPAN")
+    })
+}
+

@@ -87,3 +87,9 @@ exports.run = function () {
     }
 }
 
+exports.suite = function (test, assert) {
+    
+    test("sanity", function () {
+        assert.equals(true, true)
+    })
+}
