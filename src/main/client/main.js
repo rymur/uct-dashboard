@@ -12,6 +12,7 @@ var scheduling = require("./scheduling")
 var measurements = require("./measurements")
 var WeekView = require("./WeekView")
 var WeekCalendar = require("./weekCalendar")
+var EventView = require("./EventView")
 
 exports.run = function () {
 
@@ -50,16 +51,14 @@ exports.run = function () {
             deactivateTabs()
             html.addClassTo("#navScheduling", "active")
             html.clear(mainNode)
+
             ajaxGet("/faces-sample-data.json", function (data) {
-                mainNode.appendChild(scheduling.buildCalendar(new Date()))
-                arrays.each(appendNode, scheduling.eventNodes(
-                    scheduling.separate(data)))
+                scheduling.render(mainNode, data)
             })
+
             //getFacesAuth(function (pk) {
                 //ajaxGet("/faces/data?pk=" + pk.key, function (data) {
-                    //mainNode.appendChild(scheduling.buildCalendar(new Date()))
-                    //arrays.each(appendNode, scheduling.eventNodes(
-                        //scheduling.separate(data)))
+                    //scheduling.create(mainNode, data)
                 //})
             //})
         }
@@ -70,15 +69,6 @@ exports.run = function () {
 
             html.addClassTo("#navAdmin", "active")
             html.clear(mainNode)
-
-            mainNode.appendChild(
-                WeekView.weekColLabels(WeekCalendar.startDate(2013, 7)))
-
-            mainNode.appendChild(WeekView.weekRowLabels)
-
-            arrays.each(function (x) {
-                mainNode.appendChild(x)
-            }, WeekView.weekCells)
 
             //ajaxGet("/cgi-bin/disks.com", function (data) {
                 //console.log("TODO: admin needs workd", disks.buildView(

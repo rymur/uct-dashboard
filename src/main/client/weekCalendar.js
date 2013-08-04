@@ -54,3 +54,16 @@ _.buildWeeks = function (year, month) {
     return weeks
 }
 
+_.hourDiff = function (date1, date2) {
+    var h1 = date1.getHours()
+    var h2 = date2.getHours()
+    if (date1.getMinutes() > 0) {
+        h1 = h1 + 1
+    }
+    return h1 - h2
+}
+
+_.dateId = function (dt) {
+    return dt.getFullYear() + "" + dt.getMonth() + "" + dt.getDate()
+}
+

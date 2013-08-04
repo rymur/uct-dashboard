@@ -1,15 +1,20 @@
-var u = require("lymph-utils").utils
+var lymphClient = require("lymph-client")
+var lymphUtils = require("lymph-utils")
+
 var h = require("lymph-client").html
 var dates = require("lymph-dates").dates
 
+var u = lymphUtils.utils
+var arrays = lymphUtils.arrays
+
 var WeekCalendar = require("./weekCalendar")
+var WeekView = require("./WeekView")
+var EventView = require("./EventView")
 var calendar = require("./calendar")
 
-exports.buildCalendar = function (startDate) {
+exports.render = function (mainNode, eventData) {
 
-    var d = new Date(startDate.getFullYear(), startDate.getMonth(),
-        startDate.getDate())
-
+    var d = new Date()
     var currentWeek = dates.weekNumber(d)[1]
     var day = d.getDay()
     var diff = d.getDate() - day + (day === 0 ? -6 : 1)
@@ -21,98 +26,17 @@ exports.buildCalendar = function (startDate) {
         send: function (x) {console.log("bus fired", x.data)}
     })
 
-    return h.SECTION(
+    mainNode.appendChild(h.SECTION(
         h.H2(
             h.IMG({ src: "/images/icon-calendar.svg", class: "icon" }),
             h.SPAN({class: "section-title"}, "Schedule")),
         h.DIV({class: "flow" },
-            h.DIV({class:"f-75"},
-                exports.timeSlotLabels(),
-                exports.daySlotColumns(monday)),
+            h.DIV({class:"f-75"}, WeekView.create()),
             h.DIV({id: "navigator", class:"f-25"}, calendarView(
-                d.getFullYear(), d.getMonth(), currentWeek))))
-}
+                d.getFullYear(), d.getMonth(), currentWeek)))))
 
-exports.eventNodes = function (data) {
-
-    var view = []
-
-    data.forEach(function (e) {
-
-        var startDate = new Date(e.start)
-        var endDate = new Date(e.end)
-        var ediv = h.DIV({ class: "event-" + e.scanner + " " + e.part },
-            e.account)
-
-        var startHour = startDate.getHours()
-        var startPOS = ((startHour * 20) + 2) + 20
-
-        ediv.style.top = startPOS + "px"
-        ediv.style.height = ((hourDiff(endDate, startDate) * 20) - 7) + "px"
-
-        view.push({id:dateId(startDate), el:ediv})
-    })
-
-    return view
-}
-
-exports.timeSlotLabels = function () {
-
-    var splitTime = u.splitOn(":")
-
-    return h.DIV({ class: "day-label" },
-        h.DIV(h.space()),
-        timeSlots().map(timeSlotLabelsItem))
-
-    function humanHour (h) {
-        return h % 12 || 12
-    }
-
-    function getAMPM (h) {
-        return (h < 12) ? "am" : "pm"
-    }
-
-    function parseTime (t) {
-        return { h: t[0], m: t[1] }
-    }
-
-    function formatTimeSlotLabel (time) {
-        var t = parseTime(splitTime(time))
-        return (t.m == "30") ? h.space() : humanHour(t.h) + getAMPM(t.h)
-    }
-
-    function timeSlotLabelsItem (time) {
-        return h.DIV({ class: "hour" }, formatTimeSlotLabel(time))
-    }
-}
-
-exports.daySlotColumns = function (monday) {
-
-    return daySlots(monday).map(daySlotRows)
-
-    function formatDaySlotLabel (date) {
-        return dates.translateDay(date.getDay()) + " " + (date.getMonth() + 1) +
-            "/" + date.getDate()
-    }
-
-    function formatDaySlotData (date) {
-        return date.getFullYear() + "" + date.getMonth() + "" + date.getDate()
-    }
-
-    function daySlotLabel (date) {
-        return h.DIV({ class:"day-title" }, formatDaySlotLabel(date))
-    }
-
-    function daySlotRowsItem (time) {
-        return h.DIV({ class:"time", dataTime: time }, h.space())
-    }
-
-    function daySlotRows (date) {
-        return h.DIV({ class: "day", id: formatDaySlotData(date) },
-            daySlotLabel(date),
-            timeSlots().map(daySlotRowsItem)
-        )
-    }
+    arrays.each(EventView.appendNode,
+        arrays.map(EventView.eventNode, exports.separate(eventData)))
 }
 
 exports.separate = function (data) {
@@ -196,36 +120,3 @@ exports.separate = function (data) {
     }
 }
 
-function dateId (dt) {
-    return dt.getFullYear() + "" + dt.getMonth() + "" + dt.getDate()
-}
-
-function hourDiff(date1, date2) {
-    var h1 = date1.getHours()
-    var h2 = date2.getHours()
-    if (date1.getMinutes() > 0) {
-        h1 = h1 + 1
-    }
-    return h1 - h2
-}
-
-function DateDiff(date1, date2) {
-    var datediff = date1.getTime() - date2.getTime()
-    return (datediff / (24*60*60*1000))
-}
-
-function daySlots (startDate) {
-    var days = []
-    for (var i = 0; i < 7; i++) {
-        days.push(dates.addDays(startDate, i))
-    }
-    return days
-}
-
-function timeSlots () {
-    var slots = []
-    for (var i = 0; i <= 23; i++) {
-        slots.push(i + ":00")
-    }
-    return slots
-}
