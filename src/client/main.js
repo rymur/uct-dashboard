@@ -20,12 +20,7 @@ exports.run = function () {
     var bus = Bus.create()
     var mainNode = document.getElementById("main")
 
-    var getKey = f.partial(data.getKey, sessionStorage)
-    var setKey = f.partial(data.setKey, sessionStorage)
-    var ajaxGet = f.partial(ajax.get, xhr)
-    var getFacesAuth = data.facesAuth(ajaxGet, getKey, setKey)
-
-    var scheduling = Scheduling.create(bus, ajaxGet)
+    var scheduling = Scheduling.create(bus, xhr)
 
     var deactivateTabs = f.partial(
         f.partial(html.removeClassFrom, "header.title nav a"), "active")

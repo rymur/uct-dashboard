@@ -84,7 +84,7 @@ function eventNode (event) {
         {class:"event-" + event.scanner + " " + event.part}, event.account)
 
     node.style.top = (((sd.getHours() * 20) + 2)) + "px"
-    node.style.height = ((WeekCalendar.hourDiff(ed, sd) * 20) - 7) + "px"
+    node.style.height = ((WeekCalendar.hourDiff(ed, sd) * 20) - 4) + "px"
 
     return { id:WeekCalendar.dateId(sd), el:node }
 }

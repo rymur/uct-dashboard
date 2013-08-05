@@ -4,6 +4,7 @@ var lymphUtils = require("lymph-utils")
 var h = require("lymph-client").html
 var dates = require("lymph-dates").dates
 
+var ajax = lymphClient.ajax
 var u = lymphUtils.utils
 var arrays = lymphUtils.arrays
 
@@ -11,8 +12,9 @@ var WeekCalendar = require("./weekCalendar")
 var WeekView = require("./WeekView")
 var EventView = require("./EventView")
 var calendar = require("./calendar")
+var data = require("./data")
 
-exports.create = function (bus, ajaxGet) {
+exports.create = function (bus, xhr) {
 
     var d = new Date()
     var currentWeek = dates.weekNumber(d)[1]
@@ -20,14 +22,22 @@ exports.create = function (bus, ajaxGet) {
     var diff = d.getDate() - day + (day === 0 ? -6 : 1)
     var monday = new Date(d.setDate(diff))
 
+    var getKey = u.partial(data.getKey, sessionStorage)
+    var setKey = u.partial(data.setKey, sessionStorage)
+    var ajaxGet = u.partial(ajax.get, xhr)
+
+    var getFacesAuth = data.facesAuth(ajaxGet, getKey, setKey)
+
     var calendarModel = WeekCalendar.modelFor(d.getFullYear(), d.getMonth())
     var calendarView = calendar.create(calendarModel, bus)
     var weekView = WeekView.create(bus)
 
-    var container = h.SECTION(
+    var container = h.SECTION({id:"scheduling"},
         h.H2(
             h.IMG({ src: "/images/icon-calendar.svg", class: "icon" }),
-            h.SPAN({class: "section-title"}, "Schedule")),
+            h.SPAN({class: "section-title"}, "Schedule:"),
+            h.SPAN({class:"legend legend-50"}, "uCT 50"),
+            h.SPAN({class:"legend legend-40"}, "uCT 40")),
         h.DIV({class: "flow" },
             h.DIV({class:"f-75"}, weekView.el),
             h.DIV({id: "navigator", class:"f-25"}, calendarView(
