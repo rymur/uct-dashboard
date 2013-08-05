@@ -19,7 +19,7 @@ exports.startDate = function (year, month) {
 }
 
 exports.dateId = function (dt) {
-    return dt.getFullYear() + "" + dt.getMonth() + "" + dt.getDate()
+    return dt.getFullYear() + "" + padZero(dt.getMonth()) + "" + padZero(dt.getDate())
 }
 
 exports.hourDiff = function (date1, date2) {
@@ -29,6 +29,10 @@ exports.hourDiff = function (date1, date2) {
         h1 = h1 + 1
     }
     return h1 - h2
+}
+
+function padZero (num) {
+    return num <= 9 ? "0" + num : num
 }
 
 function adjustSundays (day) {

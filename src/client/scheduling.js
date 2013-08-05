@@ -199,5 +199,9 @@ exports.suite = function (test, assert) {
         assert.equals(splitDays.length, 5)
         assert.equals(splitDays[0].part, "full")
     })
+
+    test("rendering", function () {
+        console.log(exports.create().el)
+    })
 }
 
