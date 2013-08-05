@@ -33,7 +33,7 @@ exports.run = function () {
     window.addEventListener("hashchange", handler, false)
 
     if(window.location.hash === ""){
-        window.location.hash = "/"
+        window.location.hash = "/scheduling"
     }
     else {
         handler()
@@ -44,16 +44,16 @@ exports.run = function () {
         var path = pathFrom(window.location)
 
         if (path === "/") {
-            deactivateTabs()
-            html.addClassTo("#navMeasurements", "active")
-            html.clear(mainNode)
-            console.log("TODO: finish measurement")
+            window.location.hash = "/scheduling"
         }
 
         else if (path === "/scheduling") {
+
             deactivateTabs()
+
             html.addClassTo("#navScheduling", "active")
             html.clear(mainNode)
+
             mainNode.appendChild(scheduling.el)
             scheduling.render()
 
@@ -62,6 +62,16 @@ exports.run = function () {
                     //scheduling.create(mainNode, data)
                 //})
             //})
+        }
+
+        else if (path === "/measurements") {
+
+            deactivateTabs()
+
+            html.addClassTo("#navMeasurements", "active")
+            html.clear(mainNode)
+
+            console.log("TODO: finish measurement")
         }
 
         else if (path === "/admin") {
