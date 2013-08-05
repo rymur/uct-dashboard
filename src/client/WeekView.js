@@ -18,9 +18,9 @@ var weekRowLabels = html.DIV({class:"day-label"},
 
 exports.create = function () {
     
-    var sd = WeekCalendar.startDate(2013, 7)
+    var sd = new Date()
 
-    var container = html.DIV({class:"f-75"},
+    var container = html.DIV(
         weekColLabels(sd), weekRowLabels, weekCells(sd))
 
     return {el:container, render:render}

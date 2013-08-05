@@ -49,7 +49,7 @@ exports.create = function (bus, ajaxGet) {
     return {el:container, render:render}
 
     function render (sd) {
-        sd = sd || WeekCalendar.startDate(2013,7)
+        sd = sd || new Date()
         ajaxGet("/faces-sample-data.json", function (data) {
             weekView.render(separate(data), sd)
         })
