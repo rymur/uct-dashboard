@@ -12,7 +12,7 @@ var WeekView = require("./WeekView")
 var EventView = require("./EventView")
 var calendar = require("./calendar")
 
-exports.create = function () {
+exports.create = function (bus, ajaxGet) {
 
     var d = new Date()
     var currentWeek = dates.weekNumber(d)[1]
@@ -21,12 +21,8 @@ exports.create = function () {
     var monday = new Date(d.setDate(diff))
 
     var calendarModel = WeekCalendar.modelFor(d.getFullYear(), d.getMonth())
-
-    var calendarView = calendar.create(calendarModel, {
-        send: function (x) {console.log("bus fired", x.data)}
-    })
-
-    var weekView = WeekView.create()
+    var calendarView = calendar.create(calendarModel, bus)
+    var weekView = WeekView.create(bus)
 
     var container = h.SECTION(
         h.H2(
@@ -37,10 +33,26 @@ exports.create = function () {
             h.DIV({id: "navigator", class:"f-25"}, calendarView(
                 d.getFullYear(), d.getMonth(), currentWeek))))
 
+    bus.listen("calendar:next", function (data) {
+        render(WeekCalendar.startDate(data.year, data.month))
+    })
+
+    bus.listen("calendar:prev", function (data) {
+        render(WeekCalendar.startDate(data.year, data.month))
+    })
+
+    bus.listen("calendar:selected", function (data) {
+        var d = data.split(":")
+        render(WeekCalendar.dateFromWeekNumber(d[0], d[2]))
+    })
+
     return {el:container, render:render}
 
-    function render (ajaxGet) {
-        ajaxGet("/faces-sample-data.json", u.compose(weekView.render, separate))
+    function render (sd) {
+        sd = sd || WeekCalendar.startDate(2013,7)
+        ajaxGet("/faces-sample-data.json", function (data) {
+            weekView.render(separate(data), sd)
+        })
     }
 }
 

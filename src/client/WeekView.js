@@ -17,7 +17,7 @@ var weekRowLabels = html.DIV({class:"day-label"},
     rows(staticAttr({class:"hour"}), hourLabel))
 
 exports.create = function () {
-
+    
     var sd = WeekCalendar.startDate(2013, 7)
 
     var container = html.DIV({class:"f-75"},
@@ -25,7 +25,16 @@ exports.create = function () {
 
     return {el:container, render:render}
 
-    function render (data) {
+    function render (data, sd) {
+        html.clear(container)
+
+        container.appendChild(weekColLabels(sd))
+        container.appendChild(weekRowLabels)
+
+        arrays.each(function (x) {
+            container.appendChild(x)
+        }, weekCells(sd))
+
         arrays.each(appendNode, arrays.map(eventNode, data))
     }
 }

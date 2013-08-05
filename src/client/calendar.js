@@ -37,15 +37,12 @@ _.create = function (calendarModel, bus) {
 
             render (event.data.year, event.data.month, weekNum)
 
-            bus.send(event)
+            bus.send(event.name, event.data)
         }
         else if (t.target.hasAttribute("data-week")){
             h.removeClass("active", tbl.querySelector("tr.active"))
             h.addClass("active", t.target.parentElement)
-            bus.send({
-                 name:"calendar:selected"
-                ,data: t.target.getAttribute("data-week")
-            })
+            bus.send("calendar:selected", t.target.getAttribute("data-week"))
         }
     })
 

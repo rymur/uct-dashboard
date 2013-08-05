@@ -12,17 +12,20 @@ var Scheduling = require("./scheduling")
 var measurements = require("./measurements")
 var WeekView = require("./WeekView")
 var WeekCalendar = require("./weekCalendar")
+var Bus = require("./Bus")
 
 exports.run = function () {
 
     var xhr = new XMLHttpRequest()
+    var bus = Bus.create()
     var mainNode = document.getElementById("main")
-    var scheduling = Scheduling.create()
 
     var getKey = f.partial(data.getKey, sessionStorage)
     var setKey = f.partial(data.setKey, sessionStorage)
     var ajaxGet = f.partial(ajax.get, xhr)
     var getFacesAuth = data.facesAuth(ajaxGet, getKey, setKey)
+
+    var scheduling = Scheduling.create(bus, ajaxGet)
 
     var deactivateTabs = f.partial(
         f.partial(html.removeClassFrom, "header.title nav a"), "active")
@@ -52,7 +55,7 @@ exports.run = function () {
             html.addClassTo("#navScheduling", "active")
             html.clear(mainNode)
             mainNode.appendChild(scheduling.el)
-            scheduling.render(ajaxGet)
+            scheduling.render()
 
             //getFacesAuth(function (pk) {
                 //ajaxGet("/faces/data?pk=" + pk.key, function (data) {

@@ -69,6 +69,13 @@ function buildWeeks (year, month) {
     return weeks
 }
 
+exports.dateFromWeekNumber = function (year, week) {
+    var date = new Date(year, 0, 10, 0, 0, 0)
+    var day = new Date(year, 0, 4, 0, 0, 0)
+    var month = day.getTime() - date.getDay() * 86400000
+    return new Date(month + ((week - 1) * 7 + 0) * 86400000)
+}
+
 exports.suite = function (test, assert) {
 
     test("creates an array for 12 months of calendar data", function () {
@@ -118,6 +125,13 @@ exports.suite = function (test, assert) {
             ,{num:9, days:[25, 26, 27, 28,  1,  2,  3]}
             ,{num:10,days:[ 4,  5,  6,  7,  8,  9, 10]}
         ])
+    })
+
+    test("getting the monday date given a year and week number", function () {
+        assert.equals(tds(exports.dateFromWeekNumber(2013, 2)), "Mon Jan 07 2013")
+        assert.equals(tds(exports.dateFromWeekNumber(2013, 49)),"Mon Dec 02 2013")
+        assert.equals(tds(exports.dateFromWeekNumber(2014, 9)), "Mon Feb 24 2014")
+        assert.equals(tds(exports.dateFromWeekNumber(2014, 36)), "Mon Sep 01 2014")
     })
 
     function tds(x) { return x.toDateString() }
