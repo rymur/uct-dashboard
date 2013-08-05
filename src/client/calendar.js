@@ -15,7 +15,7 @@ var dates = require("lymph-dates").dates
 var monthNames = ["January", "February", "March", "April", "May", "June", 
     "July", "August", "September", "October", "November", "December"]
 
-var dayNames = ["Sun", "Mon", "Tue", "Wed", "Thr", "Fri", "Sat"]
+var dayNames = ["Mon", "Tue", "Wed", "Thr", "Fri", "Sat", "Sun"]
 
 _.create = function (calendarModel, bus) {
 
