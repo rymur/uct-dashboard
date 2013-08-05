@@ -52,10 +52,7 @@ exports.run = function () {
             html.addClassTo("#navScheduling", "active")
             html.clear(mainNode)
             mainNode.appendChild(scheduling.el)
-
-            ajaxGet("/faces-sample-data.json", function (data) {
-                scheduling.render(data)
-            })
+            scheduling.render(ajaxGet)
 
             //getFacesAuth(function (pk) {
                 //ajaxGet("/faces/data?pk=" + pk.key, function (data) {

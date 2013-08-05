@@ -39,8 +39,8 @@ exports.create = function () {
 
     return {el:container, render:render}
 
-    function render (eventData) {
-        weekView.render(separate(eventData))
+    function render (ajaxGet) {
+        ajaxGet("/faces-sample-data.json", u.compose(weekView.render, separate))
     }
 }
 
@@ -198,10 +198,6 @@ exports.suite = function (test, assert) {
 
         assert.equals(splitDays.length, 5)
         assert.equals(splitDays[0].part, "full")
-    })
-
-    test("rendering", function () {
-        console.log(exports.create().el)
     })
 }
 
