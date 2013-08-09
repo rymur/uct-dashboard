@@ -20,8 +20,6 @@ exports.run = function () {
     var bus = Bus.create()
     var mainNode = document.getElementById("main")
 
-    var scheduling = Scheduling.create(bus, xhr)
-
     var deactivateTabs = f.partial(
         f.partial(html.removeClassFrom, "header.title nav a"), "active")
 
@@ -49,14 +47,10 @@ exports.run = function () {
             html.addClassTo("#navScheduling", "active")
             html.clear(mainNode)
 
-            mainNode.appendChild(scheduling.el)
-            scheduling.render()
-
-            //getFacesAuth(function (pk) {
-                //ajaxGet("/faces/data?pk=" + pk.key, function (data) {
-                    //scheduling.create(mainNode, data)
-                //})
-            //})
+            Scheduling.create(bus, xhr, function (scheduling) {
+                mainNode.appendChild(scheduling.el)
+                scheduling.render()
+            })
         }
 
         else if (path === "/measurements") {

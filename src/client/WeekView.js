@@ -16,16 +16,16 @@ var hourLabel = utils.compose(html.SPAN, dates.humanHour)
 var weekRowLabels = html.DIV({class:"day-label"},
     rows(staticAttr({class:"hour"}), hourLabel))
 
-exports.create = function () {
+exports.create = function (bus, data, createDone) {
     
     var sd = new Date()
 
     var container = html.DIV(
         weekColLabels(sd), weekRowLabels, weekCells(sd))
 
-    return {el:container, render:render}
+    createDone({el:container, render:render})
 
-    function render (data, sd) {
+    function render (sd) {
         html.clear(container)
 
         container.appendChild(weekColLabels(sd))

@@ -7,14 +7,15 @@ var dates = require("lymph-dates").dates
 var ajax = lymphClient.ajax
 var u = lymphUtils.utils
 var arrays = lymphUtils.arrays
+var promises = lymphUtils.promises
 
 var WeekCalendar = require("./weekCalendar")
 var WeekView = require("./WeekView")
 var EventView = require("./EventView")
-var calendar = require("./calendar")
+var CalendarView = require("./calendar")
 var data = require("./data")
 
-exports.create = function (bus, xhr) {
+exports.create = function (bus, xhr, createDone) {
 
     var d = new Date()
     var currentWeek = dates.weekNumber(d)[1]
@@ -28,42 +29,49 @@ exports.create = function (bus, xhr) {
 
     var getFacesAuth = data.facesAuth(ajaxGet, getKey, setKey)
 
-    var calendarModel = WeekCalendar.modelFor(d.getFullYear(), d.getMonth())
-    var calendarView = calendar.create(calendarModel, bus)
-    var weekView = WeekView.create(bus)
+    getFacesAuth(function (pk) {
+        ajaxGet("/faces/data?pk=" + pk.key, function (facesData) {
+        //ajaxGet("/faces-sample-data.json", function (facesData) {
 
-    var container = h.SECTION({id:"scheduling"},
-        h.H2(
-            h.IMG({ src: "/images/icon-calendar.svg", class: "icon" }),
-            h.SPAN({class: "section-title"}, "Schedule:"),
-            h.SPAN({class:"legend legend-50"}, "uCT 50"),
-            h.SPAN({class:"legend legend-40"}, "uCT 40")),
-        h.DIV({class: "flow" },
-            h.DIV({class:"f-75"}, weekView.el),
-            h.DIV({id: "navigator", class:"f-25"}, calendarView(
-                d.getFullYear(), d.getMonth(), currentWeek))))
+            var calendarModel = WeekCalendar.modelFor(
+                d.getFullYear(), d.getMonth())
 
-    bus.listen("calendar:next", function (data) {
-        render(WeekCalendar.startDate(data.year, data.month))
-    })
+            CalendarView.create(calendarModel, bus, function (calendarView) {
 
-    bus.listen("calendar:prev", function (data) {
-        render(WeekCalendar.startDate(data.year, data.month))
-    })
+                WeekView.create(bus, separate(facesData), function (weekView) {
 
-    bus.listen("calendar:selected", function (data) {
-        var d = data.split(":")
-        render(WeekCalendar.dateFromWeekNumber(d[0], d[2]))
-    })
+                    var container = h.SECTION({id:"scheduling"},
+                        h.H2(
+                            h.IMG({ src: "/images/icon-calendar.svg", class: "icon" }),
+                            h.SPAN({class:"legend legend-50"}, "uCT 50"),
+                            h.SPAN({class:"legend legend-40"}, "uCT 40")),
+                        h.DIV({class: "flow" },
+                            h.DIV({class:"f-75"}, weekView.el),
+                            h.DIV({id: "navigator", class:"f-25"}, calendarView.el)))
 
-    return {el:container, render:render}
+                    bus.listen("calendar:next", function (data) {
+                        render(WeekCalendar.startDate(data.year, data.month))
+                    })
 
-    function render (sd) {
-        sd = sd || new Date()
-        ajaxGet("/faces-sample-data.json", function (data) {
-            weekView.render(separate(data), sd)
+                    bus.listen("calendar:prev", function (data) {
+                        render(WeekCalendar.startDate(data.year, data.month))
+                    })
+
+                    bus.listen("calendar:selected", function (data) {
+                        var d = data.split(":")
+                        render(WeekCalendar.dateFromWeekNumber(d[0], d[2]))
+                    })
+
+                    createDone({el:container, render:render})
+
+                    function render (sd) {
+                        calendarView.render(d.getFullYear(), d.getMonth(), currentWeek)
+                        weekView.render(sd || d)
+                    }
+                })
+            })
         })
-    }
+    })
 }
 
 function separate (data) {
@@ -165,7 +173,7 @@ exports.suite = function (test, assert) {
 
     test("break a single multi day events into separate events", function () {
 
-        var processedData = [//{{
+        var processedData = [
              { 
                  scanner: "40"
                 ,start: "2013-05-15T15:00:00.000-0500"
@@ -174,7 +182,7 @@ exports.suite = function (test, assert) {
                 ,comment: "VBX"
                 ,part: "full"
             }
-        ] //}}
+        ]
 
         var splitDays = separate(processedData)
 
@@ -189,7 +197,7 @@ exports.suite = function (test, assert) {
 
     test("not spliting single day events", function () {
 
-        var processedData = [//{{
+        var processedData = [
             { 
                  scanner: "40"
                 ,start: "2013-05-24T16:00:00.000-0500"
@@ -214,7 +222,7 @@ exports.suite = function (test, assert) {
                 ,comment: ""
                 ,part: "full"
             }
-        ] //}}
+        ]
 
         var splitDays = separate(processedData)
 

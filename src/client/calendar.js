@@ -17,7 +17,7 @@ var monthNames = ["January", "February", "March", "April", "May", "June",
 
 var dayNames = ["Mon", "Tue", "Wed", "Thr", "Fri", "Sat", "Sun"]
 
-_.create = function (calendarModel, bus) {
+_.create = function (calendarModel, bus, createDone) {
 
     var tcaption = h.CAPTION("")
     var thead = h.THEAD(calDaysOfWeek(dayNames))
@@ -46,7 +46,7 @@ _.create = function (calendarModel, bus) {
         }
     })
 
-    return render
+    createDone({el:tbl, render:render})
 
     function render (year, month, weekNum) {
 
@@ -63,8 +63,6 @@ _.create = function (calendarModel, bus) {
         arrays.each(function (x) {
             tbody.appendChild(x)
         }, _.tableRows(monthModel, weekNum))
-
-        return tbl
     }
 
     function parseDate (date) {
@@ -185,6 +183,4 @@ exports.suite = function (test, assert) {
         assert.equals(title[2].id, "cal-next")
         assert.equals(title[2].getAttribute("data-month"), "2013:5")
     })
-
 }
-
