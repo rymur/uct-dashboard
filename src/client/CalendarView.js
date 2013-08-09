@@ -35,7 +35,7 @@ _.create = function (calendarModel, bus, createDone) {
             var weekNum = dates.weekNumber(
                 new Date(event.data.year, event.data.month, 1))[1]
 
-            render (event.data.year, event.data.month, weekNum)
+            render(event.data.year, event.data.month, weekNum)
 
             bus.send(event.name, event.data)
         }

@@ -12,7 +12,7 @@ var promises = lymphUtils.promises
 var WeekCalendar = require("./weekCalendar")
 var WeekView = require("./WeekView")
 var EventView = require("./EventView")
-var CalendarView = require("./calendar")
+var CalendarView = require("./CalendarView")
 var data = require("./data")
 
 exports.create = function (bus, xhr, createDone) {
@@ -29,9 +29,9 @@ exports.create = function (bus, xhr, createDone) {
 
     var getFacesAuth = data.facesAuth(ajaxGet, getKey, setKey)
 
-    getFacesAuth(function (pk) {
-        ajaxGet("/faces/data?pk=" + pk.key, function (facesData) {
-        //ajaxGet("/faces-sample-data.json", function (facesData) {
+    //getFacesAuth(function (pk) {
+        //ajaxGet("/faces/data?pk=" + pk.key, function (facesData) {
+        ajaxGet("/faces-sample-data.json", function (facesData) {
 
             var calendarModel = WeekCalendar.modelFor(
                 d.getFullYear(), d.getMonth())
@@ -62,16 +62,17 @@ exports.create = function (bus, xhr, createDone) {
                         render(WeekCalendar.dateFromWeekNumber(d[0], d[2]))
                     })
 
+                    calendarView.render(d.getFullYear(), d.getMonth(), currentWeek)
+
                     createDone({el:container, render:render})
 
                     function render (sd) {
-                        calendarView.render(d.getFullYear(), d.getMonth(), currentWeek)
                         weekView.render(sd || d)
                     }
                 })
             })
         })
-    })
+    //})
 }
 
 function separate (data) {
