@@ -33,10 +33,10 @@ sudo chmod +x /etc/network/if-pre-up.d/iptables-restore
 APP_NAME=uct-dashboard
 
 sudo mkdir "/var/local/$APP_NAME"
-sudo chown ubuntu "/var/local/$APP_NAME"
+sudo chown uct-dashboard "/var/local/$APP_NAME"
 
 sudo mkdir "/var/log/$APP_NAME"
-sudo chown ubuntu "/var/log/$APP_NAME"
+sudo chown uct-dashboard "/var/log/$APP_NAME"
 
 # create an upstart configuration file for app
 ################################################################################
@@ -50,8 +50,8 @@ stop  on runlevel [06]
 respawn
 
 script
-    cd /home/ubuntu/$APP_NAME
-    exec su -c "/usr/bin/node bin/devit.js >> /var/log/$APP_NAME/std.log 2>&1" ubuntu
+    cd /home/uct-dashboard/$APP_NAME
+    exec su -c "/usr/bin/node bin/devit.js >> /var/log/$APP_NAME/std.log 2>&1" uct-dashboard
 end script
 
 post-start script
